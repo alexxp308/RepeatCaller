@@ -1,0 +1,48 @@
+﻿@model RepeatCaller.Models.LoginModel
+@{
+    ViewBag.Title = "Login";
+}
+@Styles.Render("~/styles/Vendor")
+<style>
+    input,
+    select,
+    textarea {
+        max-width: none !important;
+    }
+
+    body {
+        padding-top: 0px !important;
+        padding-bottom: 0px !important;
+    }
+</style>
+<div class="limiter">
+    <div class="container-login100">
+        <div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-50">
+            <form class="login100-form validate-form" action="@Url.Action("Login", "Login")" method="post" id="login-form">
+                @Html.AntiForgeryToken()
+                <span class="login100-form-title p-b-33">
+                    Reporte Repeat Caller
+                </span>
+                @Html.ValidationSummary(true, "El nombre del usuario o la contraseña es incorrecta.", new { @class = "text-danger" })
+                <div class="wrap-input100 validate-input" data-validate="Usuario es requerido">
+                    <input class="input100" type="text" id="UserName" name="UserName" placeholder="Usuario">
+                    <span class="focus-input100-1"></span>
+                    <span class="focus-input100-2"></span>
+                </div>
+
+                <div class="wrap-input100 rs1 validate-input" data-validate="Contraseña es requerido">
+                    <input class="input100" type="password" id="Password" name="Password" placeholder="Contraseña">
+                    <span class="focus-input100-1"></span>
+                    <span class="focus-input100-2"></span>
+                </div>
+
+                <div class="container-login100-form-btn m-t-20">
+                    <button class="login100-form-btn">
+                        Login
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/scripts/Vendor")
