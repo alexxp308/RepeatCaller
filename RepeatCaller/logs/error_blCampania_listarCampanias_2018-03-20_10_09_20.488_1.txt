@@ -1,0 +1,7 @@
+Nombre:		blCampania_listarCampanias
+URL:		http://localhost:1468/Campanias/
+Mensaje:	La longitud no puede ser inferior a cero.
+Nombre del parámetro: length
+Detalle:	en System.String.Substring(Int32 startIndex, Int32 length)
+   en RepeatCaller.Librerias.DL.dlCampania.listarCampanias(Int32 idSede, SqlConnection con) en D:\DESARROLLO_ALEXANDER_HUERTA_MENACHO\Reporte_Repeat_Caller\RepeatCaller\RepeatCaller.Librerias.DL\dlCampania.cs:línea 46
+   en RepeatCaller.Librerias.BL.blCampania.listarCampanias(Int32 idSede) en D:\DESARROLLO_ALEXANDER_HUERTA_MENACHO\Reporte_Repeat_Caller\RepeatCaller\RepeatCaller.Librerias.BL\blCampania.cs:línea 41

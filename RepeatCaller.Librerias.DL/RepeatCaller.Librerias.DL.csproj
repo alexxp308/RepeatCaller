@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="dlBase.cs" />
+    <Compile Include="dlCampania.cs" />
     <Compile Include="dlLogin.cs" />
     <Compile Include="dlUsuarios.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

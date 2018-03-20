@@ -1,0 +1,58 @@
+﻿
+@{
+    ViewBag.Title = "SubidaBase";
+}
+
+<br />
+<br />
+<div class="panel panel-success">
+    <div class="panel-heading" style="padding-bottom:0px;"><h4>SUBIDA DE BASE</h4></div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="form-group col-sm-12 col-md-4 col-lg-4">
+                <label class="col-sm-12 col-md-4 col-lg-4 control-label" for="campania" style="padding-top:10px;padding-left:10px;">Campaña:</label>
+                <div class="col-sm-12 col-md-8 col-lg-8">
+                    <select class="form-control" id="campania" onchange="ultimoReporte()">
+                        <option value="0">--SELECCIONAR--</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group col-sm-12 col-md-4 col-lg-4">
+                <label class="col-sm-12 col-md-4 col-lg-4 control-label" for="tipo" style="padding-top:10px;padding-left:10px;">Tipo:</label>
+                <div class="col-sm-12 col-md-8 col-lg-8">
+                    <select class="form-control" id="tipo" onchange="ultimoReporte()">
+                        <option value="0">--SELECCIONAR--</option>
+                        <option value="CDR">CDR</option>
+                        <option value="IVR">IVR</option>
+                        <option value="TIPI">TIPIFICACIÓN</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group col-sm-12 col-md-4 col-lg-4">
+                <label class="col-sm-12 col-md-4 col-lg-4 control-label" for="fechaI" style="padding-top:10px;padding-left:10px;">Fecha:</label>
+                <div class="col-sm-12 col-md-8 col-lg-8">
+                    <input type="date" class="form-control" placeholder="YYYY-MM-DD" id="fechaI" style="cursor:pointer;" onchange="ultimoReporte()">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-group col-sm-12 col-md-3 col-lg-3" style="margin-left:30px;">
+                <label class="input-group-btn">
+                    <span class="btn btn-warning">
+                        Archivo&hellip; <input type="file" style="display: none;" multiple id="myfile" onchange="cambioFile(this)">
+                    </span>
+                </label>
+                <input type="text" class="form-control" id="feik" readonly>
+            </div>
+
+            <div class="form-group col-sm-12 col-md-4 col-lg-4" id="divUltimo" style="display:none;">
+                <label class="col-sm-12 col-md-4 col-lg-4 control-label" style="padding-top:10px;padding-left:10px;">Ultima subida:</label>
+                <div class="col-sm-12 col-md-8 col-lg-8">
+                    <input type="text" class="form-control" id="ultimo">
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-success" onclick="uploadFile();"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Subir archivo</button>
+    </div>
+</div>
+@Scripts.Render("~/scripts/SubidaBase")

@@ -14,7 +14,23 @@
             @Html.ActionLink("Repeat Caller", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
         </div>
         <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav"></ul>
+            <ul class="nav navbar-nav">
+                @if (User.IsInRole("Ejecutivo"))
+                {
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            Mantenimiento
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" id="dropUsers">
+                            <li><a href='@Url.Action("Index","Usuarios")'>Usuarios</a></li>
+                            <li><a href='@Url.Action("Index","Campanias")'>Campañas</a></li>
+                        </ul>
+                    </li>
+                }
+
+                <li class="nav-item">@Html.ActionLink("Subida Base", "Index", "SubidaBase")</li>
+            </ul>
 
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
