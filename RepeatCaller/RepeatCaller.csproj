@@ -123,6 +123,7 @@
     <Content Include="Content\css\lib\font-awesome.min.css" />
     <Content Include="Content\css\lib\vendor\main.css" />
     <Content Include="Content\css\lib\vendor\util.css" />
+    <Content Include="Content\css\subidaBase.css" />
     <Content Include="Content\css\usuarios.css" />
     <Content Include="Content\fonts\icon-font.min.css" />
     <Content Include="Content\css\Site.css" />

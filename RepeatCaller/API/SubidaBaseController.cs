@@ -14,32 +14,33 @@ namespace RepeatCaller.API
         {
             string path = HttpContext.Current.Server.MapPath("~/Doc/");
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-            var filesToDelete = HttpContext.Current.Request.Params["file"];//con esto tomo los parametros del form
-            HttpFileCollection files = HttpContext.Current.Request.Files;
-            HttpPostedFile fl;
+            var tipo = HttpContext.Current.Request.Params["tipo"];
+            var campania = HttpContext.Current.Request.Params["campania"];
+            var fecha = HttpContext.Current.Request.Params["fecha"];
+            var userId = HttpContext.Current.Request.Params["userId"];
+            HttpPostedFile fl = HttpContext.Current.Request.Files[0];
             string file, flName, ext, newName, result = "";
             string[] testfiles;
-            for (int i = 0; i < files.Count; i++)
+            if (HttpContext.Current.Request.Browser.Browser.ToUpper() == "IE" || HttpContext.Current.Request.Browser.Browser.ToUpper() == "INTERNETEXPLORER")
             {
-                fl = files[i];
-                if (HttpContext.Current.Request.Browser.Browser.ToUpper() == "IE" || HttpContext.Current.Request.Browser.Browser.ToUpper() == "INTERNETEXPLORER")
-                {
-                    testfiles = fl.FileName.Split(new char[] { '\\' });
-                    file = testfiles[testfiles.Length - 1];
-                }
-                else
-                {
-                    file = fl.FileName;
-                }
-                flName = Path.GetFileName(path + "\\" + file);
-                ext = Path.GetExtension(path + "\\" + file);
-                newName = path + "\\" + (flName.Substring(0, flName.Length - 4) + "_" + DateTime.Now.ToString("yyyy_MM_ddTHH_mm_ss") + ext);
-                fl.SaveAs(newName);
-                blBase oblBase = new blBase();
-                oblBase.guardarBase(1,"prueba.txt","CDR",1);
-                result += (flName.Substring(0, flName.Length - 4) + "_" + DateTime.Now.ToString("yyyy_MM_ddTHH_mm_ss") + ext) + "|";
+                testfiles = fl.FileName.Split(new char[] { '\\' });
+                file = testfiles[testfiles.Length - 1];
             }
-            return (result == "") ? "" : result.Substring(0, result.Length - 1);
+            else
+            {
+                file = fl.FileName;
+            }
+
+            flName = Path.GetFileName(path + "\\" + file);
+            ext = Path.GetExtension(path + "\\" + file);
+            string onlyName = (flName.Substring(0, flName.Length - 4) + "_" + DateTime.Now.ToString("yyyy_MM_ddTHH_mm_ss") + ext);
+            newName = path + "\\" + onlyName;
+            fl.SaveAs(newName);
+            blBase oblBase = new blBase();
+            int id = oblBase.guardarBase(Convert.ToInt32(userId),onlyName,Convert.ToString(tipo),Convert.ToInt32(campania),Convert.ToString(fecha));
+            result = onlyName+"|"+id;
+
+            return result;
         }
     }
 }

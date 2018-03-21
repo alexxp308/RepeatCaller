@@ -1,0 +1,5 @@
+Nombre:		blBase_guardarBase
+URL:		http://localhost:1468/SubidaBase
+Mensaje:	Referencia a objeto no establecida como instancia de un objeto.
+Detalle:	en RepeatCaller.Librerias.DL.dlBase.guardarBase(Int32 userId, String archivo, String tipo, Int32 campaniaId, String fechaBase, SqlConnection con) en D:\DESARROLLO_ALEXANDER_HUERTA_MENACHO\Reporte_Repeat_Caller\RepeatCaller\RepeatCaller.Librerias.DL\dlBase.cs:línea 24
+   en RepeatCaller.Librerias.BL.blBase.guardarBase(Int32 userId, String archivo, String tipo, Int32 campaniaId, String fechaBase) en D:\DESARROLLO_ALEXANDER_HUERTA_MENACHO\Reporte_Repeat_Caller\RepeatCaller\RepeatCaller.Librerias.BL\blBase.cs:línea 21

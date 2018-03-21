@@ -1,0 +1,6 @@
+Nombre:		SubidaBaseController_CargarTabla
+URL:		http://localhost:1468/SubidaBase
+Mensaje:	El índice y la longitud deben hacer referencia a una ubicación en la cadena.
+Nombre del parámetro: length
+Detalle:	en System.String.Substring(Int32 startIndex, Int32 length)
+   en RepeatCaller.Controllers.SubidaBaseController.CargarTabla(BaseDTO laBase) en D:\DESARROLLO_ALEXANDER_HUERTA_MENACHO\Reporte_Repeat_Caller\RepeatCaller\RepeatCaller\Controllers\SubidaBaseController.cs:línea 37

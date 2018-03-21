@@ -164,6 +164,200 @@ end
 select * from CAMPANIA
 
 create table Reporte_CDR(
-
-
+	BaseId INT,
+	Campaña varchar(100),
+	BPO varchar(50),
+	Canal varchar(50),
+	MSISDN varchar(50),
+	Fecha varchar(50),
+	Hora varchar(50),
+	Duracion varchar(50),
+	[Codigo de skill] varchar(10),
+	[Nombre de skill] varchar(100),
+	[Usuario/Agente] varchar(50),
+	[ID de agente] varchar(50),
+	[Nombre de agente] varchar(100),
+	[Cortada por] varchar(50),
+	Estado varchar(50),
+	[Codigo Transferencia] varchar(100),
+	[Descripción Transferencia] varchar(100),
+	[Tipo Transferencia] varchar(50)
 )
+
+create table BASE(
+baseId int primary key identity(1, 1),
+userId int,
+campaniaId int,
+fechaBase varchar(10),
+fhCreacion varchar(19),
+nombreArchivo varchar(200),
+tipo varchar(4),
+isActive bit
+)
+
+alter procedure USP_GUARDAR_BASE
+(
+ @userId int,
+ @archivo varchar(200),
+ @tipo varchar(4),
+ @campaniaId int,
+ @fechaBase varchar(10)
+)
+as
+BEGIN
+	declare @sql nvarchar(200) = 'delete t from REPORTE_'+@tipo+ ' t inner join BASE b on b.isActive=1 and b.tipo='''+@tipo+''' and b.campaniaId = '+convert(nvarchar(20),@campaniaId)+' and b.fechaBase = '''+@fechaBase+''' and t.BaseId = b.baseId'
+	exec(@sql) 
+	update BASE set isActive=0 where tipo=@tipo and campaniaId=@campaniaId and fechaBase=@fechaBase and isActive=1;
+	insert into BASE(userId,campaniaId,fechaBase,fhCreacion,nombreArchivo,tipo,isActive) values
+	(@userId,@campaniaId,@fechaBase,CONVERT(varchar(19),GETDATE(),120),@archivo,@tipo,1)
+	declare @id int= @@IDENTITY;
+	select @id
+END
+exec USP_GUARDAR_BASE 1,'EJEM','CDR',1,'23232'
+select * from base
+
+create procedure USP_GET_BASE_CARGADA(
+@campaniaId int,
+@tipo varchar(4),
+@fechaBase varchar(10)
+)
+AS
+BEGIN
+	select fhCreacion from BASE WHERE campaniaId=@campaniaId and tipo=@tipo and fechaBase=@fechaBase and isActive=1;
+END
+
+CREATE TYPE CDRType AS TABLE 
+(
+	BaseId INT,
+    Campaña varchar(100),
+	BPO varchar(50),
+	Canal varchar(50),
+	MSISDN varchar(50),
+	Fecha varchar(50),
+	Hora varchar(50),
+	Duracion varchar(50),
+	[Codigo de skill] varchar(10),
+	[Nombre de skill] varchar(100),
+	[Usuario/Agente] varchar(50),
+	[ID de agente] varchar(50),
+	[Nombre de agente] varchar(100),
+	[Cortada por] varchar(50),
+	Estado varchar(50),
+	[Codigo Transferencia] varchar(100),
+	[Descripción Transferencia] varchar(100),
+	[Tipo Transferencia] varchar(50)
+)
+
+alter procedure USP_CARGAR_TABLA_CDR
+(
+	@tabla CDRType READONLY
+)
+as
+begin
+	insert into Reporte_CDR select * from @tabla
+end
+
+select * from Reporte_IVR
+
+create table Reporte_IVR(
+	BaseId INT,
+ [Time Segment] VARCHAR(50),
+ [USER] varchar(100),
+ [NOMBRE DEL ASESOR] varchar(100),
+[ANY] varchar(50),
+[RESPUESTA PREGUNTA 1] varchar(4),
+[RESPUESTA PREGUNTA 2] varchar(4),
+[TIEMPO MEDIO DE RESPUESTA PREGUNTA 1] varchar(8),
+[TIEMPO MEDIO DE RESPUESTA PREGUNTA 2] varchar(8),
+[TIEMPO TOTAL DE PERMANENCIA EN EL IVR] varchar(8),
+[CORTE DE LLAMADA (ASESOR, IVR O CLIENTE)] varchar(50),
+[CANAL] varchar(10),
+[BPO (PROVEEDOR)] varchar(50),
+[CAMPAÑA] varchar(100),
+[SKILL] varchar(200)
+)
+drop TYPE IVRType
+CREATE TYPE IVRType AS TABLE 
+(
+BaseId INT,
+[Time Segment] VARCHAR(50),
+ [USER] varchar(100),
+ [NOMBRE DEL ASESOR] varchar(100),
+[ANY] varchar(50),
+[RESPUESTA PREGUNTA 1] varchar(4),
+[RESPUESTA PREGUNTA 2] varchar(4),
+[TIEMPO MEDIO DE RESPUESTA PREGUNTA 1] varchar(8),
+[TIEMPO MEDIO DE RESPUESTA PREGUNTA 2] varchar(8),
+[TIEMPO TOTAL DE PERMANENCIA EN EL IVR] varchar(8),
+[CORTE DE LLAMADA (ASESOR, IVR O CLIENTE)] varchar(50),
+[CANAL] varchar(10),
+[BPO (PROVEEDOR)] varchar(50),
+[CAMPAÑA] varchar(100),
+[SKILL] varchar(200)
+)
+
+alter procedure USP_CARGAR_TABLA_IVR
+(
+	@tabla IVRType READONLY
+)
+as
+begin
+	insert into Reporte_IVR select * from @tabla
+end
+
+CREATE TABLE Reporte_TIPI(
+BaseId INT,
+	FECHA_CREACION varchar(50),
+	FECHA_DE_CREACION varchar(50),
+	TIPO_LOGIN varchar(10),
+	LOGIN_AGENTE varchar(50),
+	[NOMBRE DE ASESOR] varchar(200),
+	ID_INTERACCION varchar(50),
+	TITULO_INTERACCION varchar(200),
+	TIPO_INTERACCION varchar(100),
+	CLASE_INTERACCION varchar(200),
+	SUBCLASE_INTERACCION varchar(100),
+	NOMBRE_CONTACO varchar(100),
+	APELLIDO_CONTACTO varchar(100),
+	TELEFONO varchar(50),
+	CICLO_FACTURACION varchar(50),
+	MODALIDAD varchar(100),
+	SERVICIO_AFECTADO varchar(100),
+	INCONVENIENTE varchar(200)
+)
+
+CREATE TYPE TIPIType AS TABLE 
+(
+BaseId INT,
+FECHA_CREACION varchar(50),
+	FECHA_DE_CREACION varchar(50),
+	TIPO_LOGIN varchar(10),
+	LOGIN_AGENTE varchar(50),
+	[NOMBRE DE ASESOR] varchar(200),
+	ID_INTERACCION varchar(50),
+	TITULO_INTERACCION varchar(200),
+	TIPO_INTERACCION varchar(100),
+	CLASE_INTERACCION varchar(200),
+	SUBCLASE_INTERACCION varchar(100),
+	NOMBRE_CONTACO varchar(100),
+	APELLIDO_CONTACTO varchar(100),
+	TELEFONO varchar(50),
+	CICLO_FACTURACION varchar(50),
+	MODALIDAD varchar(100),
+	SERVICIO_AFECTADO varchar(100),
+	INCONVENIENTE varchar(200)
+)
+
+ALTER procedure USP_CARGAR_TABLA_TIPI
+(
+	@tabla TIPIType READONLY
+)
+as
+begin
+	insert into Reporte_TIPI select * from @tabla
+end
+select * from Reporte_CDR
+SELECT * FROM BASE
+select baseId from BASE b where (select b.campaniaId from BASE b ,@tabla t where b.baseId = t.BaseId)
+select baseId from BASE b where b.campaniaId = (select bb.campaniaId from @tabla t,BASE bb where bb.baseId = t.baseId)
+

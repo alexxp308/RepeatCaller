@@ -44,15 +44,15 @@
                 </label>
                 <input type="text" class="form-control" id="feik" readonly>
             </div>
-
-            <div class="form-group col-sm-12 col-md-4 col-lg-4" id="divUltimo" style="display:none;">
-                <label class="col-sm-12 col-md-4 col-lg-4 control-label" style="padding-top:10px;padding-left:10px;">Ultima subida:</label>
-                <div class="col-sm-12 col-md-8 col-lg-8">
-                    <input type="text" class="form-control" id="ultimo">
-                </div>
-            </div>
         </div>
         <button class="btn btn-success" onclick="uploadFile();"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Subir archivo</button>
     </div>
 </div>
+<div class="alert" id='divAlert'>
+    <span class="closebtn" onclick="quitarAlerta(this);">&times;</span>
+    <strong>Alerta: </strong>Ya existe una base cargada.<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>Hora de subida:<span id="fhCreacion"></span></span>
+</div>
+
+@Styles.Render("~/Content/SubidaBase")
 @Scripts.Render("~/scripts/SubidaBase")
