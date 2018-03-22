@@ -19,6 +19,7 @@ function getMax(today)
 {
     $("#fechaI").val(today);
     $("#fechaI").attr("max", today);
+    $("#fechaI_buscar").attr("max", today);
 }
 
 function listarCampañas(sedeId)
@@ -36,7 +37,7 @@ function listarCampañas(sedeId)
             if (response.length > 0)
             {
                 var campanias = response.split("#");
-                var str = "<option val='0'>--SELECCIONAR--</option>";
+                var str = "<option value='0'>--SELECCIONAR--</option>";
                 var campania = null;
                 for (var i = 0; i < campanias.length; i++)
                 {
@@ -44,6 +45,7 @@ function listarCampañas(sedeId)
                     str += "<option value='" + campania[0] + "'>" + campania[1] + "</option>";
                 }
                 $("#campania").html(str);
+                $("#campania_buscar").html(str);
 
             } else
             {
@@ -136,7 +138,7 @@ function cambioFile(elem)
 function uploadFile()
 {
     debugger;
-    var pregunta = false;
+    var pregunta = true;
     if (estaCargado == 1)
     {
         pregunta = confirm("Ya existe una base,¿Desea cambiarla?");
@@ -155,7 +157,7 @@ function uploadFile()
             formData.append("tipo", tipo);
             formData.append("campania", campania);
             formData.append("fecha", fecha);
-
+            $(".loader").toggle(true);
             $.ajax({
                 url: "api/SubidaBase/Upload",
                 type: "POST",
@@ -173,6 +175,7 @@ function uploadFile()
                         var baseId = datos[1];
                         if (nombre == "" || baseId == "0")
                         {
+                            $(".loader").toggle(false);
                             alert("No se subio el archivo correctamente");
                         } else
                         {
@@ -180,6 +183,8 @@ function uploadFile()
                             data.nombreArchivo = nombre;
                             data.baseId = baseId;
                             data.tipo = tipo;
+                            data.campaniaId = campania;
+                            data.fechaBase = fecha;
                             $.ajax({
                                 method: "POST",
                                 url: "/SubidaBase/CargarTabla",
@@ -188,7 +193,18 @@ function uploadFile()
                                 dataType: "text",
                                 success: function (response)
                                 {
-                                    alert("Se guardaron " + response + " filas");
+                                    $(".loader").toggle(false);
+                                    if (!isNaN(response * 1))
+                                    {
+                                        alert("Se guardaron " + response + " filas");
+                                        $("#dvUpload").modal("hide");
+                                    } else if (response == "A")
+                                    {
+                                        alert("El formato no es compatible, se regreso a la base anterior");
+                                    } else
+                                    {
+                                        alert("El formato no es compatible");
+                                    }
                                 }
                             });
                         }
@@ -203,4 +219,199 @@ function uploadFile()
             alert("Falta completar campos");
         }
     }
+}
+
+function abrirModalUpload()
+{
+    $("#dvUpload").modal("show");
+    limpiar();
+}
+
+function limpiar()
+{
+    $("#tipo").val("0");
+    $("#campania").val("0");
+    $("#fechaI").val(getcurrentDate());
+    $("#feik").val("");
+    $("#myfile").val("");
+}
+
+function buscarBase()
+{
+    var fecha_buscar = $("#fechaI_buscar").val();
+    if (fecha_buscar != "")
+    {
+        var tipo = $("#tipo_buscar").val();
+        var campania = $("#campania_buscar").val();
+        data = {};
+        data.tipo = tipo;
+        data.campaniaId = campania*1;
+        data.fechaBase = fecha_buscar;
+        $(".loader").toggle(true);
+        $.ajax({
+            method: "POST",
+            url: "/SubidaBase/obtenerBases",
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            dataType: "text",
+            success: function (response)
+            {
+                $(".loader").toggle(false);
+                if (response.length > 0)
+                {
+                    var filas = response.split("£");
+                    var campos = null;
+                    var bases = {};
+                    var nombreCampania = "";
+                    for (var i = 0; i < filas.length; i++)
+                    {
+                        campos = filas[i].split("|");
+                        if (jQuery.isEmptyObject(bases[campos[6]]))
+                        {
+                            bases[campos[6]] = {};
+                            nombreCampania = campos[2].replace(/ /g, '');
+                            if (jQuery.isEmptyObject(bases[campos[6]][nombreCampania]))
+                            {
+                                bases[campos[6]][nombreCampania] = [];
+                                bases[campos[6]][nombreCampania].push(
+                                    {
+                                        baseId: campos[0], nombreUser: campos[1], nombreCampania: campos[2],
+                                        fechaBase: campos[3], fhCreacion: campos[4], nombreArchivo: campos[5],
+                                        tipo: campos[6], isActive: campos[7], isCompatible: campos[8]
+                                    });
+                            } else
+                            {
+                                bases[campos[6]][nombreCampania].push(
+                                    {
+                                        baseId: campos[0], nombreUser: campos[1], nombreCampania: campos[2],
+                                        fechaBase: campos[3], fhCreacion: campos[4], nombreArchivo: campos[5],
+                                        tipo: campos[6], isActive: campos[7], isCompatible: campos[8]
+                                    });
+                            }
+                        } else
+                        {
+                            nombreCampania = campos[2].replace(/ /g, '');
+                            if (jQuery.isEmptyObject(bases[campos[6]][nombreCampania]))
+                            {
+                                bases[campos[6]][nombreCampania] = [];
+                                bases[campos[6]][nombreCampania].push(
+                                    {
+                                        baseId: campos[0], nombreUser: campos[1], nombreCampania: campos[2],
+                                        fechaBase: campos[3], fhCreacion: campos[4], nombreArchivo: campos[5],
+                                        tipo: campos[6], isActive: campos[7], isCompatible: campos[8]
+                                    });
+                            } else
+                            {
+                                bases[campos[6]][nombreCampania].push(
+                                    {
+                                        baseId: campos[0], nombreUser: campos[1], nombreCampania: campos[2],
+                                        fechaBase: campos[3], fhCreacion: campos[4], nombreArchivo: campos[5],
+                                        tipo: campos[6], isActive: campos[7], isCompatible: campos[8]
+                                    });
+                            }
+                        }
+                    }
+
+                    console.log(bases);
+                    var keysTipo = Object.keys(bases);
+                    var tipo = null;
+                    var campania = null;
+                    var strM = "";
+                    debugger;
+                    for (var i = 0; i < keysTipo.length; i++)
+                    {
+                        tipo = bases[keysTipo[i]];
+                        strM += "<div class='panel panel-default'>";
+                        strM += "<div class='panel-heading'>";
+                        strM += "<h5 class='panel-title'>";
+                        strM += "<div class='row'>";
+                        strM += "<div class='col-sm-12 col-md-6 col-lg-6' style='padding-top: 10px;'>";
+                        strM += "<a data-toggle='collapse' data-parent='#result' href='#tabla" + i + "'><span style='font-weight:bold'>TIPO:</span> " + keysTipo[i] + "</a></div>";
+                        strM += "</div>";
+                        strM += "</h5>";
+                        strM += "</div>";
+                        strM += ' <div id="tabla' + i + '" class="panel-collapse collapse' + ((i == 0) ? ' in' : '') + '">';
+                        strM += '<div class="panel-body">';
+                        strM += crearPanels(tipo, keysTipo[i]);
+                        debugger;
+                        strM += "</div></div></div>"
+                    }
+                    $("#result").html(strM);
+                    document.getElementById("content").style.display = "block";
+                } else
+                {
+                    alert("No hay datos para mostrar");
+                }
+            }
+        });
+    } else
+    {
+        alert("Debes seleccionar al menos la fecha");
+    }
+}
+
+function crearPanels(campanias,tipo)
+{
+    var keyCampania = Object.keys(campanias);
+    var str = "";
+    var campos = "";
+    var bases = null;
+    str += "<div class='panel- group' id='panel_" + tipo + "'>";
+    
+    for (var n = 0; n < keyCampania.length; n++)
+    {
+        bases = campanias[keyCampania[n]];
+        campos = "";
+        for (var m = 0; m < bases.length; m++)
+        {
+            campos += "<tr id='tr_" + bases[m].baseId + "'>";
+            campos += "<th scope='row' align='center'><span style='display:none;' id='col_" + bases[m].baseId + "'></span><p>" + (m + 1) + "</p></th>";
+            campos += "<td align='center'>" + bases[m].nombreUser + "</td>";
+            //campos += "<td align='center'>" + bases[m].fechaBase + "</td>";
+            campos += "<td align='center'>" + bases[m].fhCreacion + "</td>";
+            campos += "<td align='center'><a href='/Doc/" + bases[m].nombreArchivo+"' download><button type='button' class='btn btn-default' title='" + bases[m].nombreArchivo +"'><span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span></button></a></td>";
+            campos += "<td align='center'><div class='esfera " + ((bases[m].isActive == "True") ? "on' title='base actual'" : "off' title='base pasada'") + "></div></td>";
+            campos += "<td align='center'><span class='"+((bases[m].isCompatible == "True") ? "glyphicon glyphicon-ok' title='correcto'" :"glyphicon glyphicon-remove' title='incorrecto'")+" aria-hidden='true' style='font-size:20px;'></span></td>";
+            campos += "</tr>";
+        }
+        str += "<div class='panel panel-default'>";
+        str += "<div class='panel-heading'>";
+        str += "<h5 class='panel-title'>";
+        str += "<div class='row'>";
+        str += "<div class='col-sm-12 col-md-6 col-lg-6' style='padding-top: 10px;'>";
+        str += "<a data-toggle='collapse' data-parent='#panel_" + tipo + "' href='#tabla_" + tipo + n + "'><span style='font-weight:bold'>CAMPAÑA:</span> " + keyCampania[n] + "</a></div>";
+        str += "</div>";
+        str += "</h5>";
+        str += "</div>";
+        str += ' <div id="tabla_' + tipo + n + '" class="panel-collapse collapse' + ((n == 0) ? ' in' : '') + '">';
+        str += '<div class="panel-body">';
+        str += createTable(campos);
+        str += "</div></div></div>"
+    }
+
+    str += "</div>";
+
+    return str;
+}
+
+
+function createTable(cadena)
+{
+    var my = "";
+    my += '<table class="table table-bordered">';
+    my += '<thead class="blue-grey lighten-4">';
+    my += '<tr class="success">';
+    my += '<th align="center">Nro</th>';
+    my += '<th align="center">Usuario</th>';
+    my += '<th align="center">Fecha creación</th>';
+    my += '<th align="center">Archivo</th>';
+    my += '<th align="center">Estado</th>';
+    my += '<th align="center" width="10%">Formato<br>compatible</th>';
+    my += '</tr>';
+    my += '</thead>';
+    my += '<tbody>';
+    my += cadena;
+    my += '</tbody>';
+    my += '</table>';
+    return my;
 }

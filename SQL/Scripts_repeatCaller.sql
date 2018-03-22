@@ -192,7 +192,8 @@ fechaBase varchar(10),
 fhCreacion varchar(19),
 nombreArchivo varchar(200),
 tipo varchar(4),
-isActive bit
+isActive bit,
+isCompatible bit
 )
 
 alter procedure USP_GUARDAR_BASE
@@ -205,11 +206,8 @@ alter procedure USP_GUARDAR_BASE
 )
 as
 BEGIN
-	declare @sql nvarchar(200) = 'delete t from REPORTE_'+@tipo+ ' t inner join BASE b on b.isActive=1 and b.tipo='''+@tipo+''' and b.campaniaId = '+convert(nvarchar(20),@campaniaId)+' and b.fechaBase = '''+@fechaBase+''' and t.BaseId = b.baseId'
-	exec(@sql) 
-	update BASE set isActive=0 where tipo=@tipo and campaniaId=@campaniaId and fechaBase=@fechaBase and isActive=1;
-	insert into BASE(userId,campaniaId,fechaBase,fhCreacion,nombreArchivo,tipo,isActive) values
-	(@userId,@campaniaId,@fechaBase,CONVERT(varchar(19),GETDATE(),120),@archivo,@tipo,1)
+	insert into BASE(userId,campaniaId,fechaBase,fhCreacion,nombreArchivo,tipo,isActive,isCompatible) values
+	(@userId,@campaniaId,@fechaBase,CONVERT(varchar(19),GETDATE(),120),@archivo,@tipo,0,1)
 	declare @id int= @@IDENTITY;
 	select @id
 END
@@ -250,14 +248,21 @@ CREATE TYPE CDRType AS TABLE
 
 alter procedure USP_CARGAR_TABLA_CDR
 (
-	@tabla CDRType READONLY
+	@tabla CDRType READONLY,
+	@campaniaId int,
+	@fechaBase VARCHAR(10),
+	@baseId int
 )
 as
 begin
+	delete t from REPORTE_CDR t inner join BASE b on b.isActive=1 and b.tipo='CDR' and b.campaniaId = @campaniaId  and b.fechaBase = @fechaBase and t.BaseId = b.baseId
+	update BASE set isActive=0 where isActive=1 and tipo='CDR' and campaniaId=@campaniaId and fechaBase=@fechaBase
+	update BASE set isActive=1 where baseId = @baseId;
 	insert into Reporte_CDR select * from @tabla
+	select COUNT(*) from REPORTE_CDR where baseId = @baseId;
 end
-
-select * from Reporte_IVR
+select *from base
+select * from REPORTE_TIPI
 
 create table Reporte_IVR(
 	BaseId INT,
@@ -298,11 +303,18 @@ BaseId INT,
 
 alter procedure USP_CARGAR_TABLA_IVR
 (
-	@tabla IVRType READONLY
+	@tabla IVRType READONLY,
+	@campaniaId int,
+	@fechaBase VARCHAR(10),
+	@baseId int
 )
 as
 begin
+	delete t from REPORTE_IVR t inner join BASE b on b.isActive=1 and b.tipo='IVR' and b.campaniaId = @campaniaId  and b.fechaBase = @fechaBase and t.BaseId = b.baseId
+	update BASE set isActive=0 where isActive=1 and tipo='IVR' and campaniaId=@campaniaId and fechaBase=@fechaBase
+	update BASE set isActive=1 where baseId = @baseId;
 	insert into Reporte_IVR select * from @tabla
+	select COUNT(*) from REPORTE_IVR where baseId = @baseId;
 end
 
 CREATE TABLE Reporte_TIPI(
@@ -350,14 +362,92 @@ FECHA_CREACION varchar(50),
 
 ALTER procedure USP_CARGAR_TABLA_TIPI
 (
-	@tabla TIPIType READONLY
+	@tabla TIPIType READONLY,
+	@campaniaId int,
+	@fechaBase VARCHAR(10),
+	@baseId int
 )
 as
 begin
+	delete t from REPORTE_TIPI t inner join BASE b on b.isActive=1 and b.tipo='TIPI' and b.campaniaId = @campaniaId  and b.fechaBase = @fechaBase and t.BaseId = b.baseId
+	update BASE set isActive=0 where isActive=1 and tipo='TIPI' and campaniaId=@campaniaId and fechaBase=@fechaBase
+	update BASE set isActive=1 where baseId = @baseId;
 	insert into Reporte_TIPI select * from @tabla
+	select COUNT(*) from Reporte_TIPI where baseId = @baseId;
 end
+
 select * from Reporte_CDR
-SELECT * FROM BASE
+SELECT * FROM BASE where fechaBase = '2018-03-21'
 select baseId from BASE b where (select b.campaniaId from BASE b ,@tabla t where b.baseId = t.BaseId)
 select baseId from BASE b where b.campaniaId = (select bb.campaniaId from @tabla t,BASE bb where bb.baseId = t.baseId)
+
+alter procedure USP_REGRESAR_BASE_ANTERIOR(
+@campaniaId int,
+@fechaBase VARCHAR(10),
+@tipo varchar(4),
+@baseId INT
+)
+AS
+BEGIN
+	update BASE set isCompatible = 0 where baseId = @baseId;
+	declare @result varchar(10);
+	declare @exist int = (select COUNT(*) from BASE where isActive=1 and campaniaId=@campaniaId and fechaBase=@fechaBase and tipo=@tipo and isCompatible=1);
+	if(@exist>0)
+	begin
+		set @result = 'A'
+	end
+	else
+	begin
+		set @result = 'B'
+	end
+	select @result
+END
+
+SELECT * FROM BASE
+
+alter PROCEDURE USP_OBTENER_BASES
+(
+	@campaniaId INT,
+	@tipo varchar(4),
+	@fechaBase VARCHAR(10)
+)
+AS
+BEGIN
+	IF(@campaniaId = 0)
+	begin
+		if(@tipo = '0')
+		begin
+			select b.baseId,u.NombreCompleto,c.nombreCampania,b.fechaBase,b.fhCreacion,
+			b.nombreArchivo,b.tipo,b.isActive,b.isCompatible from 
+			BASE b,Usuarios u,CAMPANIA c WHERE fechaBase = @fechaBase and u.UserId = b.userId and b.campaniaId = c.idCampania order by isActive desc,fhCreacion desc
+		end
+		else
+		begin
+			select b.baseId,u.NombreCompleto,c.nombreCampania,b.fechaBase,b.fhCreacion,
+			b.nombreArchivo,b.tipo,b.isActive,b.isCompatible 
+			from BASE b,Usuarios u,CAMPANIA c WHERE tipo = @tipo and fechaBase = @fechaBase and u.UserId = b.userId and b.campaniaId = c.idCampania order by isActive desc,fhCreacion desc
+		end
+	end
+	else
+	begin
+		if(@tipo = '0')
+		begin
+			select b.baseId,u.NombreCompleto,c.nombreCampania,b.fechaBase,b.fhCreacion,
+			b.nombreArchivo,b.tipo,b.isActive,b.isCompatible  
+			from BASE b,Usuarios u,CAMPANIA c  WHERE campaniaId=@campaniaId and fechaBase = @fechaBase and u.UserId = b.userId and b.campaniaId = c.idCampania order by isActive desc,fhCreacion desc
+		end
+		else
+		begin
+			select b.baseId,u.NombreCompleto,c.nombreCampania,b.fechaBase,b.fhCreacion,
+			b.nombreArchivo,b.tipo,b.isActive,b.isCompatible 
+			from BASE b,Usuarios u,CAMPANIA c  WHERE campaniaId=@campaniaId and tipo = @tipo and fechaBase = @fechaBase and u.UserId = b.userId and b.campaniaId = c.idCampania order by isActive desc,fhCreacion desc
+		end
+	end
+END
+
+exec USP_OBTENER_BASES 0,'0','2018-03-21'
+select * from Reporte_CDR
+select * from Reporte_TIPI
+SELECT c.[Usuario/Agente],c.Fecha,c.MSISDN,t.TITULO_INTERACCION FROM Reporte_CDR c,Reporte_TIPI t where 
+c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
 

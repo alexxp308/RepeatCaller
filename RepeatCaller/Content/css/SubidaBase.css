@@ -25,3 +25,22 @@
     .closebtn:hover {
         color: black;
     }
+
+div.esfera {
+    width: 25px;
+    height: 25px;
+    -ms-border-radius: 150px;
+    -moz-border-radius: 150px;
+    -webkit-border-radius: 150px;
+    -o-border-radius: 150px;
+    border-radius: 150px;
+    margin: 0px auto;
+}
+
+    div.esfera.on {
+        background: radial-gradient(at top left, #0F0 20%, #040);
+    }
+
+    div.esfera.off {
+        background: radial-gradient(at top left, #F51E00 20%, #630C00);
+    }

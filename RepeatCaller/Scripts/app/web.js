@@ -1,6 +1,11 @@
 ﻿$(function ()
 {
     obtenerDatos();
+
+    $(window).load(function ()
+    {
+        $(".loader").fadeOut("slow");
+    });
 });
 
 function obtenerDatos()

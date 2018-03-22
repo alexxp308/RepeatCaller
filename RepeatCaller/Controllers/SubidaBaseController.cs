@@ -18,9 +18,10 @@ namespace RepeatCaller.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Supervisor,Ejecutivo")]
-        public int CargarTabla(BaseDTO laBase)
+        public string CargarTabla(BaseDTO laBase)
         {
-            int result = 0;
+            string result = "";
+            int cantFilas = 0;
             blBase oblBase = new blBase();
             string path = System.Web.HttpContext.Current.Server.MapPath("~/Doc/") + laBase.nombreArchivo;
             using (System.IO.StreamReader sr = new System.IO.StreamReader(path, System.Text.Encoding.Default))
@@ -51,16 +52,15 @@ namespace RepeatCaller.Controllers
                         dt.Rows.Add(row);
                     }
 
-                    result = oblBase.CargarTabla(dt, laBase.tipo);
+                    cantFilas = oblBase.CargarTabla(dt, laBase.tipo,laBase.campaniaId,laBase.fechaBase,laBase.baseId);
                 }
                 catch (Exception ex)
                 {
-                    string url = System.Web.HttpContext.Current.Request.UrlReferrer.ToString();
-                    General.Librerias.CodigoUsuario.Log.Error(blGeneral.logPath, "SubidaBaseController_CargarTabla", url, ex);
+                    result = oblBase.backBaseAnterior(laBase.tipo, laBase.campaniaId, laBase.fechaBase, laBase.baseId);
                 }
             }
 
-            return result;
+            return (cantFilas == 0) ? result : cantFilas+"";
         }
 
         [HttpPost]
@@ -70,6 +70,16 @@ namespace RepeatCaller.Controllers
             string result = "";
             blBase olbBase = new blBase();
             result = olbBase.getBaseCargada(laBase.campaniaId,laBase.tipo,laBase.fechaBase);
+            return result;
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Supervisor,Ejecutivo")]
+        public string obtenerBases(BaseDTO laBase)
+        {
+            string result = "";
+            blBase olbBase = new blBase();
+            result = olbBase.obtenerBases(laBase.campaniaId, laBase.tipo, laBase.fechaBase);
             return result;
         }
     }

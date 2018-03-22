@@ -23,7 +23,7 @@ namespace RepeatCaller
             bundles.Add(new ScriptBundle("~/scripts/Campanias").Include("~/Scripts/webCode/Campanias.js"));
             bundles.Add(new ScriptBundle("~/scripts/SubidaBase").Include("~/Scripts/webCode/subidaBase.js"));
             bundles.Add(new StyleBundle("~/Content/SubidaBase").Include("~/Content/css/subidaBase.css"));
-            //BundleTable.EnableOptimizations = true;
+            BundleTable.EnableOptimizations = true;
         }
     }
 }

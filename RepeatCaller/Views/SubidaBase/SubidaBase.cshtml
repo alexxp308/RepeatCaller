@@ -6,21 +6,21 @@
 <br />
 <br />
 <div class="panel panel-success">
-    <div class="panel-heading" style="padding-bottom:0px;"><h4>SUBIDA DE BASE</h4></div>
+    <div class="panel-heading" style="padding-bottom:0px;"><h4>BASES</h4></div>
     <div class="panel-body">
         <div class="row">
             <div class="form-group col-sm-12 col-md-4 col-lg-4">
-                <label class="col-sm-12 col-md-4 col-lg-4 control-label" for="campania" style="padding-top:10px;padding-left:10px;">Campaña:</label>
+                <label class="col-sm-12 col-md-4 col-lg-4 control-label" for="campania_buscar" style="padding-top:10px;padding-left:10px;">Campaña:</label>
                 <div class="col-sm-12 col-md-8 col-lg-8">
-                    <select class="form-control" id="campania" onchange="ultimoReporte()">
+                    <select class="form-control" id="campania_buscar">
                         <option value="0">--SELECCIONAR--</option>
                     </select>
                 </div>
             </div>
             <div class="form-group col-sm-12 col-md-4 col-lg-4">
-                <label class="col-sm-12 col-md-4 col-lg-4 control-label" for="tipo" style="padding-top:10px;padding-left:10px;">Tipo:</label>
+                <label class="col-sm-12 col-md-4 col-lg-4 control-label" for="tipo_buscar" style="padding-top:10px;padding-left:10px;">Tipo:</label>
                 <div class="col-sm-12 col-md-8 col-lg-8">
-                    <select class="form-control" id="tipo" onchange="ultimoReporte()">
+                    <select class="form-control" id="tipo_buscar">
                         <option value="0">--SELECCIONAR--</option>
                         <option value="CDR">CDR</option>
                         <option value="IVR">IVR</option>
@@ -29,29 +29,94 @@
                 </div>
             </div>
             <div class="form-group col-sm-12 col-md-4 col-lg-4">
-                <label class="col-sm-12 col-md-4 col-lg-4 control-label" for="fechaI" style="padding-top:10px;padding-left:10px;">Fecha:</label>
+                <label class="col-sm-12 col-md-4 col-lg-4 control-label" for="fechaI_buscar" style="padding-top:10px;padding-left:10px;">Fecha:</label>
                 <div class="col-sm-12 col-md-8 col-lg-8">
-                    <input type="date" class="form-control" placeholder="YYYY-MM-DD" id="fechaI" style="cursor:pointer;" onchange="ultimoReporte()">
+                    <input type="date" class="form-control" placeholder="YYYY-MM-DD" id="fechaI_buscar" style="cursor:pointer;">
                 </div>
             </div>
         </div>
         <div class="row">
-            <div class="input-group col-sm-12 col-md-3 col-lg-3" style="margin-left:30px;">
-                <label class="input-group-btn">
-                    <span class="btn btn-warning">
-                        Archivo&hellip; <input type="file" style="display: none;" multiple id="myfile" onchange="cambioFile(this)">
-                    </span>
-                </label>
-                <input type="text" class="form-control" id="feik" readonly>
+            <div class="col-sm-12 col-md-1 col-lg-1" style="padding-right: 100px;">
+                <button class="btn btn-success" onclick="buscarBase();"><span class="glyphicon glyphicon-search" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Buscar</button>
+            </div>
+            <div class="col-sm-12 col-md-1 col-lg-1">
+                <button class="btn btn-warning" onclick="abrirModalUpload();"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Nueva base</button>
             </div>
         </div>
-        <button class="btn btn-success" onclick="uploadFile();"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Subir archivo</button>
+    </div>
+    <div class="panel-heading" style="padding-bottom:0px;background:#E7E7E7;color:black;border:1px solid #D6D6D6"><h4 style="font-weight:bold;">Resultado:</h4></div>
+    <div class="panel-body" id="content" style="display:none;">
+        <div class="panel-group" id="result"></div>
     </div>
 </div>
-<div class="alert" id='divAlert'>
-    <span class="closebtn" onclick="quitarAlerta(this);">&times;</span>
-    <strong>Alerta: </strong>Ya existe una base cargada.<br />
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>Hora de subida:<span id="fhCreacion"></span></span>
+
+<div class="modal fade" id="dvUpload" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="dvUploadLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width:40%;">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#5cb85c;">
+                <button type="button" class="close" aria-hidden="true" data-dismiss='modal'>
+                    ×
+                </button>
+                <h4 class="modal-title" style="color:white;">NUEVA BASE</h4>
+            </div>
+            <div class="modal-body" style="padding-bottom:0px;padding-top:10px;">
+                <div class="form-group">
+                    <label class="col-sm-12 col-md-4 col-lg-4 control-label" for="campania" style="padding-top:10px;padding-left:10px;">Campaña:</label>
+                    <div class="col-sm-12 col-md-8 col-lg-8">
+                        <select class="form-control" id="campania" onchange="ultimoReporte()">
+                            <option value="0">--SELECCIONAR--</option>
+                        </select>
+                    </div>
+                </div>
+                <br />
+                <br />
+                <div class="form-group">
+                    <label class="col-sm-12 col-md-4 col-lg-4 control-label" for="tipo" style="padding-top:10px;padding-left:10px;">Tipo:</label>
+                    <div class="col-sm-12 col-md-8 col-lg-8">
+                        <select class="form-control" id="tipo" onchange="ultimoReporte()">
+                            <option value="0">--SELECCIONAR--</option>
+                            <option value="CDR">CDR</option>
+                            <option value="IVR">IVR</option>
+                            <option value="TIPI">TIPIFICACIÓN</option>
+                        </select>
+                    </div>
+                </div>
+                <br />
+                <br />
+                <div class="form-group">
+                    <label class="col-sm-12 col-md-4 col-lg-4 control-label" for="fechaI" style="padding-top:10px;padding-left:10px;">Fecha:</label>
+                    <div class="col-sm-12 col-md-8 col-lg-8">
+                        <input type="date" class="form-control" placeholder="YYYY-MM-DD" id="fechaI" style="cursor:pointer;" onchange="ultimoReporte()">
+                    </div>
+                </div>
+                <br />
+                <br />
+                <div class="form-group">
+                    <label class="col-sm-12 col-md-1 col-lg-1 control-label" for="fechaI" style="padding-top:10px;padding-left:10px;">Base:</label>
+                    <div class="col-sm-12 col-md-2 col-lg-2"></div>
+                    <div class="input-group col-sm-12 col-md-8 col-lg-8" style="margin-left:30px;padding-right: 15px;padding-left: 25px;">
+                        <label class="input-group-btn">
+                            <span class="btn btn-warning">
+                                Archivo&hellip; <input type="file" style="display: none;" multiple id="myfile" onchange="cambioFile(this)">
+                            </span>
+                        </label>
+                        <input type="text" class="form-control" id="feik" readonly>
+                    </div>
+                    <div class="col-sm-12 col-md-1 col-lg-1"></div>
+                </div>
+                <br />
+            </div>
+            <div class="modal-footer" style="padding-top:5px;padding-bottom:5px;">
+                <button class="btn btn-default" data-dismiss='modal'>Cancelar</button>
+                <button class="btn btn-success" onclick="uploadFile();"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Subir base</button>
+            </div>
+        </div>
+    </div>
+    <div class="alert" id='divAlert'>
+        <span class="closebtn" onclick="quitarAlerta(this);">&times;</span>
+        <strong>Alerta: </strong>Ya existe una base cargada.<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>Hora de subida:<span id="fhCreacion"></span></span>
+    </div>
 </div>
 
 @Styles.Render("~/Content/SubidaBase")

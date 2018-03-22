@@ -1,0 +1,4 @@
+Nombre:		SubidaBaseController_CargarTabla
+URL:		http://localhost:1468/SubidaBase
+Mensaje:	Índice fuera de los límites de la matriz.
+Detalle:	en RepeatCaller.Controllers.SubidaBaseController.CargarTabla(BaseDTO laBase) en D:\DESARROLLO_ALEXANDER_HUERTA_MENACHO\Reporte_Repeat_Caller\RepeatCaller\RepeatCaller\Controllers\SubidaBaseController.cs:línea 49
