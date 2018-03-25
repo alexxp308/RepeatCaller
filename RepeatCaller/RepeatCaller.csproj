@@ -135,6 +135,7 @@
     <Content Include="Scripts\lib\jquery-1.10.2.min.js" />
     <Content Include="Scripts\lib\vendor\main.js" />
     <Content Include="Scripts\webCode\campanias.js" />
+    <Content Include="Scripts\webCode\reporte.js" />
     <Content Include="Scripts\webCode\subidaBase.js" />
     <Content Include="Scripts\webCode\usuarios.js" />
     <Content Include="Web.config">
@@ -153,6 +154,7 @@
     <Compile Include="Controllers\CampaniasController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\ReporteController.cs" />
     <Compile Include="Controllers\SubidaBaseController.cs" />
     <Compile Include="Controllers\UsuariosController.cs" />
     <Compile Include="Global.asax.cs">
@@ -161,6 +163,7 @@
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\BaseDTO.cs" />
     <Compile Include="Models\CampaniaDTO.cs" />
+    <Compile Include="Models\ReporteDTO.cs" />
     <Compile Include="Models\usuarioDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -178,6 +181,7 @@
     <Content Include="Views\Usuarios\Usuarios.cshtml" />
     <Content Include="Views\Campanias\Campanias.cshtml" />
     <Content Include="Views\SubidaBase\SubidaBase.cshtml" />
+    <Content Include="Views\Reporte\Reporte.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -196,6 +200,10 @@
     <ProjectReference Include="..\RepeatCaller.Librerias.BL\RepeatCaller.Librerias.BL.csproj">
       <Project>{36ce8d13-1259-4fa4-9bdd-0da0ded18649}</Project>
       <Name>RepeatCaller.Librerias.BL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RepeatCaller.Librerias.EL\RepeatCaller.Librerias.EL.csproj">
+      <Project>{4ce6fda9-252e-441c-822d-f971b0ffd9ab}</Project>
+      <Name>RepeatCaller.Librerias.EL</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

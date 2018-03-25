@@ -86,5 +86,25 @@ namespace RepeatCaller.Librerias.DL
             }
             return result.Substring(0, result.Length - 1);
         }
+
+        public string verStatus(int campaniaId, string fechaBase, SqlConnection cn)
+        {
+            string result = "";
+            SqlCommand cmd = new SqlCommand("USP_OBTENER_STATUS", cn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.CommandTimeout = 1800;
+            cmd.Parameters.AddWithValue("@campaniaId", campaniaId);
+            cmd.Parameters.AddWithValue("@fechaBase", fechaBase);
+            SqlDataReader drd = cmd.ExecuteReader(CommandBehavior.SingleResult);
+            if (drd != null)
+            {
+                while (drd.Read())
+                {
+                    result += drd.GetString(0) + "|" + drd.GetString(1) + "|" + drd.GetString(2) + "£";
+                }
+                drd.Close();
+            }
+            return result.Substring(0, result.Length - 1);
+        }
     }
 }

@@ -1,0 +1,7 @@
+Nombre:		blReporte_ReporteCruceDatos
+URL:		http://localhost:1468/Reporte
+Mensaje:	No se puede convertir un objeto de tipo 'System.Int32' al tipo 'System.String'.
+Detalle:	en System.Data.SqlClient.SqlBuffer.get_String()
+   en System.Data.SqlClient.SqlDataReader.GetString(Int32 i)
+   en RepeatCaller.Librerias.DL.dlReporte.ReporteCruceDatos(Int32 campaniaId, String fechaBase, SqlConnection cn) en D:\DESARROLLO_ALEXANDER_HUERTA_MENACHO\Reporte_Repeat_Caller\RepeatCaller\RepeatCaller.Librerias.DL\dlReporte.cs:línea 48
+   en RepeatCaller.Librerias.BL.blReporte.ReporteCruceDatos(Int32 campaniaId, String fechaBase) en D:\DESARROLLO_ALEXANDER_HUERTA_MENACHO\Reporte_Repeat_Caller\RepeatCaller\RepeatCaller.Librerias.BL\blReporte.cs:línea 23

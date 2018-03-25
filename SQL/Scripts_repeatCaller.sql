@@ -165,6 +165,8 @@ select * from CAMPANIA
 
 create table Reporte_CDR(
 	BaseId INT,
+	campaniaId int,
+	fechaBase varchar(10),
 	Campaña varchar(100),
 	BPO varchar(50),
 	Canal varchar(50),
@@ -183,6 +185,7 @@ create table Reporte_CDR(
 	[Descripción Transferencia] varchar(100),
 	[Tipo Transferencia] varchar(50)
 )
+
 
 create table BASE(
 baseId int primary key identity(1, 1),
@@ -224,9 +227,22 @@ BEGIN
 	select fhCreacion from BASE WHERE campaniaId=@campaniaId and tipo=@tipo and fechaBase=@fechaBase and isActive=1;
 END
 
+alter procedure USP_OBTENER_STATUS(
+ @campaniaId int,
+ @fechaBase varchar(10)
+)
+as
+begin
+	select fhCreacion,nombreArchivo,tipo from BASE where campaniaId=@campaniaId and fechaBase = @fechaBase and isActive=1
+end
+
+exec USP_OBTENER_STATUS 1,'2018-03-23'
+
 CREATE TYPE CDRType AS TABLE 
 (
 	BaseId INT,
+	campaniaId int,
+	fechaBase varchar(10),
     Campaña varchar(100),
 	BPO varchar(50),
 	Canal varchar(50),
@@ -246,7 +262,7 @@ CREATE TYPE CDRType AS TABLE
 	[Tipo Transferencia] varchar(50)
 )
 
-alter procedure USP_CARGAR_TABLA_CDR
+CREATE procedure USP_CARGAR_TABLA_CDR
 (
 	@tabla CDRType READONLY,
 	@campaniaId int,
@@ -266,6 +282,8 @@ select * from REPORTE_TIPI
 
 create table Reporte_IVR(
 	BaseId INT,
+	campaniaId int,
+	fechaBase varchar(10),
  [Time Segment] VARCHAR(50),
  [USER] varchar(100),
  [NOMBRE DEL ASESOR] varchar(100),
@@ -281,10 +299,12 @@ create table Reporte_IVR(
 [CAMPAÑA] varchar(100),
 [SKILL] varchar(200)
 )
-drop TYPE IVRType
+
 CREATE TYPE IVRType AS TABLE 
 (
 BaseId INT,
+campaniaId int,
+	fechaBase varchar(10),
 [Time Segment] VARCHAR(50),
  [USER] varchar(100),
  [NOMBRE DEL ASESOR] varchar(100),
@@ -301,7 +321,7 @@ BaseId INT,
 [SKILL] varchar(200)
 )
 
-alter procedure USP_CARGAR_TABLA_IVR
+CREATE procedure USP_CARGAR_TABLA_IVR
 (
 	@tabla IVRType READONLY,
 	@campaniaId int,
@@ -319,6 +339,8 @@ end
 
 CREATE TABLE Reporte_TIPI(
 BaseId INT,
+campaniaId int,
+	fechaBase varchar(10),
 	FECHA_CREACION varchar(50),
 	FECHA_DE_CREACION varchar(50),
 	TIPO_LOGIN varchar(10),
@@ -341,6 +363,8 @@ BaseId INT,
 CREATE TYPE TIPIType AS TABLE 
 (
 BaseId INT,
+campaniaId int,
+	fechaBase varchar(10),
 FECHA_CREACION varchar(50),
 	FECHA_DE_CREACION varchar(50),
 	TIPO_LOGIN varchar(10),
@@ -360,7 +384,7 @@ FECHA_CREACION varchar(50),
 	INCONVENIENTE varchar(200)
 )
 
-ALTER procedure USP_CARGAR_TABLA_TIPI
+CREATE procedure USP_CARGAR_TABLA_TIPI
 (
 	@tabla TIPIType READONLY,
 	@campaniaId int,
@@ -448,6 +472,105 @@ END
 exec USP_OBTENER_BASES 0,'0','2018-03-21'
 select * from Reporte_CDR
 select * from Reporte_TIPI
-SELECT c.[Usuario/Agente],c.Fecha,c.MSISDN,t.TITULO_INTERACCION FROM Reporte_CDR c,Reporte_TIPI t where 
-c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
 
+SELECT c.[Usuario/Agente],c.Fecha,c.MSISDN,t.TITULO_INTERACCION FROM 
+BASE B,Reporte_CDR c,Reporte_TIPI t,BASE B2 
+where c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
+and b.campaniaId=1 and B.campaniaId = B2.campaniaId and B.baseId = c.BaseId and B2.baseId = T.BaseId and b.fechaBase between '2018-03-21'
+
+SELECT c.[Usuario/Agente],c.Fecha,c.MSISDN,t.TITULO_INTERACCION FROM 
+Reporte_CDR c,Reporte_TIPI t
+where c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
+
+
+
+
+select c.Fecha,c.MSISDN,COUNT(*) TOTAL from Reporte_CDR c,Reporte_TIPI t where 
+c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
+group by c.Fecha,c.MSISDN
+
+select t.TITULO_INTERACCION,c.Fecha,c.MSISDN,COUNT(*) TOTAL from Reporte_CDR c,Reporte_TIPI t where 
+c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
+group by c.Fecha,c.MSISDN,t.TITULO_INTERACCION
+
+select c.[Usuario/Agente],c.Fecha,c.MSISDN,COUNT(*) TOTAL from Reporte_CDR c,Reporte_TIPI t where 
+c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
+group by c.Fecha,c.MSISDN,c.[Usuario/Agente]
+
+select r.BaseId,t.BaseId from BASE B,Reporte_CDR R,BASE B2,Reporte_TIPI T 
+WHERE B.baseId = R.BaseId and B2.baseId = T.BaseId and B.campaniaId = B2.campaniaId
+
+select * from Reporte_CDR
+delete from Reporte_CDR where BaseId=2 or BaseId=3
+
+select * from base
+
+select * from BASE where fechaBase between '2018-03-22' and '2018-03-22'
+
+alter procedure USP_REPORTE_CRUCE_DATOS(
+	@campaniaId int,
+	@fechaBase varchar(10)
+)
+AS
+BEGIN
+	declare @fechaFinal varchar(10) = convert(varchar(10),dateadd(DAY,-1,convert(date,@fechaBase)),120)
+	declare @fechaInicial varchar(10) = convert(varchar(10),dateadd(DAY,-15,convert(date,@fechaFinal)),120)
+	
+	-- DETALLE ------------------------------------------------------------------------------------------------
+	SELECT top 1000 c.[Usuario/Agente],c.Fecha,c.MSISDN,t.TITULO_INTERACCION FROM 
+	Reporte_CDR c,Reporte_TIPI t
+	where c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
+	and c.campaniaId=@campaniaId and c.campaniaId = t.campaniaId and c.fechaBase = t.fechaBase and c.fechaBase between @fechaInicial AND @fechaFinal
+	
+	-- TOTALES NUMERO ------------------------------------------------------------------------------------------------
+	select top 1000 c.Fecha,c.MSISDN,COUNT(*) TOTAL from 
+	Reporte_CDR c,Reporte_TIPI t
+	where c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
+	and c.campaniaId=@campaniaId and c.campaniaId = t.campaniaId and c.fechaBase = t.fechaBase and c.fechaBase between @fechaInicial AND @fechaFinal
+	group by c.Fecha,c.MSISDN
+	
+	-- TITULO INTERACCION ---------------------------------------------------------------------------------------------
+	select top 1000 t.TITULO_INTERACCION,c.Fecha,c.MSISDN,COUNT(*) TOTAL from 
+	Reporte_CDR c,Reporte_TIPI t ,BASE B,BASE B2
+	where c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
+	and c.campaniaId=@campaniaId and c.campaniaId = t.campaniaId and c.fechaBase = t.fechaBase and c.fechaBase between @fechaInicial AND @fechaFinal
+	group by c.Fecha,c.MSISDN,t.TITULO_INTERACCION
+	
+	-- TOTALES AGENTE --------------------------------------------------------------------------------------------------
+	select top 1000 c.[Usuario/Agente],c.Fecha,c.MSISDN,COUNT(*) TOTAL 
+	from Reporte_CDR c,Reporte_TIPI t ,BASE B,BASE B2
+	where c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
+	and c.campaniaId=@campaniaId and c.campaniaId = t.campaniaId and c.fechaBase = t.fechaBase and c.fechaBase between @fechaInicial AND @fechaFinal
+	group by c.Fecha,c.MSISDN,c.[Usuario/Agente]
+END
+
+EXEC USP_REPORTE_CRUCE_DATOS 1,'2018-03-24'
+
+
+select * from BASE
+
+
+
+select c.Fecha,c.MSISDN,COUNT(*) TOTAL from 
+	Reporte_CDR c,Reporte_TIPI t
+	where c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
+	and c.campaniaId = t.campaniaId and c.fechaBase = t.fechaBase and c.fechaBase between '2018-03-20' AND '2018-03-23'
+	group by c.Fecha,c.MSISDN
+
+	SELECT c.[Usuario/Agente],c.Fecha,c.MSISDN,t.TITULO_INTERACCION FROM 
+	BASE B,Reporte_CDR c,Reporte_TIPI t,BASE B2 
+	where c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
+	and b.campaniaId=1 and B.campaniaId = B2.campaniaId and B.baseId = c.BaseId and B2.baseId = T.BaseId and 
+	b.fechaBase between '2018-03-20' AND '2018-03-22'
+
+
+select t.TITULO_INTERACCION,c.Fecha,c.MSISDN,COUNT(*) TOTAL from 
+	Reporte_CDR c,Reporte_TIPI t ,BASE B,BASE B2
+	where c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
+	and b.campaniaId=1 and B.campaniaId = B2.campaniaId and B.baseId = c.BaseId and B2.baseId = T.BaseId and 
+	b.fechaBase between '2018-03-20' AND '2018-03-22'
+	group by c.Fecha,c.MSISDN,t.TITULO_INTERACCION
+	
+	select * from Reporte_CDR
+	select * from Reporte_IVR
+	select * from Reporte_TIPI

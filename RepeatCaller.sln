@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepeatCaller.Librerias.DL",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "General.Librerias.CodigoUsuario", "General.Librerias.CodigoUsuario\General.Librerias.CodigoUsuario.csproj", "{D25D4210-AA43-48D8-BC7F-53ECB70B42F3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepeatCaller.Librerias.EL", "RepeatCaller.Librerias.EL\RepeatCaller.Librerias.EL.csproj", "{4CE6FDA9-252E-441C-822D-F971B0FFD9AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{D25D4210-AA43-48D8-BC7F-53ECB70B42F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D25D4210-AA43-48D8-BC7F-53ECB70B42F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D25D4210-AA43-48D8-BC7F-53ECB70B42F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CE6FDA9-252E-441C-822D-F971B0FFD9AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CE6FDA9-252E-441C-822D-F971B0FFD9AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CE6FDA9-252E-441C-822D-F971B0FFD9AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CE6FDA9-252E-441C-822D-F971B0FFD9AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

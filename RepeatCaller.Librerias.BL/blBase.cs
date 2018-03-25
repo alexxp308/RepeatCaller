@@ -108,5 +108,25 @@ namespace RepeatCaller.Librerias.BL
             }
             return result;
         }
+
+        public string verStatus(int campaniaId, string fechaBase)
+        {
+            string result = "";
+            using (SqlConnection con = new SqlConnection(ConnectionString))
+            {
+                try
+                {
+                    con.Open();
+                    dlBase odlBase = new dlBase();
+                    result = odlBase.verStatus(campaniaId, fechaBase, con);
+                }
+                catch (Exception ex)
+                {
+                    string url = HttpContext.Current.Request.UrlReferrer.ToString();
+                    Log.Error(logPath, "blBase_verStatus", url, ex);
+                }
+            }
+            return result;
+        }
     }
 }

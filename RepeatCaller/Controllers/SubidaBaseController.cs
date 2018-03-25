@@ -34,6 +34,8 @@ namespace RepeatCaller.Controllers
                     cabes = System.Text.RegularExpressions.Regex.Split(filas[0], "\\t");
                     System.Data.DataTable dt = new System.Data.DataTable("TbReporte");
                     dt.Columns.Add("BaseId", Type.GetType("System.String"));
+                    dt.Columns.Add("campaniaId", Type.GetType("System.String"));
+                    dt.Columns.Add("fechaBase", Type.GetType("System.String"));
                     for (int i = 0; i < cabes.Length; i++)
                     {
                         cabes[i] = (cabes[i].Substring(0, 1) == " ") ? cabes[i].Substring(1, cabes[i].Length-1) : ((cabes[i].Substring(cabes[i].Length-1, 1) == " ")? cabes[i].Substring(1, cabes[i].Length-2):cabes[i]);
@@ -45,6 +47,8 @@ namespace RepeatCaller.Controllers
                         columnas = System.Text.RegularExpressions.Regex.Split(filas[i], "\\t");
                         row = dt.NewRow();
                         row["BaseId"] = laBase.baseId;
+                        row["campaniaId"] = laBase.campaniaId;
+                        row["fechaBase"] = laBase.fechaBase;
                         for (int j = 0; j < columnas.Length; j++)
                         {
                            row[cabes[j]] = columnas[j].ToString();
@@ -80,6 +84,16 @@ namespace RepeatCaller.Controllers
             string result = "";
             blBase olbBase = new blBase();
             result = olbBase.obtenerBases(laBase.campaniaId, laBase.tipo, laBase.fechaBase);
+            return result;
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Supervisor,Ejecutivo")]
+        public string verStatus(BaseDTO laBase)
+        {
+            string result = "";
+            blBase olbBase = new blBase();
+            result = olbBase.verStatus(laBase.campaniaId, laBase.fechaBase);
             return result;
         }
     }

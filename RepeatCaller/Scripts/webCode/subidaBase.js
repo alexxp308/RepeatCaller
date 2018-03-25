@@ -326,7 +326,7 @@ function buscarBase()
                         strM += "<h5 class='panel-title'>";
                         strM += "<div class='row'>";
                         strM += "<div class='col-sm-12 col-md-6 col-lg-6' style='padding-top: 10px;'>";
-                        strM += "<a data-toggle='collapse' data-parent='#result' href='#tabla" + i + "'><span style='font-weight:bold'>TIPO:</span> " + keysTipo[i] + "</a></div>";
+                        strM += "<a data-toggle='collapse' data-parent='#result' href='#tabla" + i + "' style='color:#f0ad4e;'><span style='font-weight:bold;'>TIPO:</span> " + keysTipo[i] + "</a></div>";
                         strM += "</div>";
                         strM += "</h5>";
                         strM += "</div>";
@@ -369,9 +369,10 @@ function crearPanels(campanias,tipo)
             campos += "<td align='center'>" + bases[m].nombreUser + "</td>";
             //campos += "<td align='center'>" + bases[m].fechaBase + "</td>";
             campos += "<td align='center'>" + bases[m].fhCreacion + "</td>";
+            campos += "<td align='center'>" + bases[m].nombreArchivo + "</td>";
             campos += "<td align='center'><a href='/Doc/" + bases[m].nombreArchivo+"' download><button type='button' class='btn btn-default' title='" + bases[m].nombreArchivo +"'><span class='glyphicon glyphicon-download-alt' aria-hidden='true'></span></button></a></td>";
             campos += "<td align='center'><div class='esfera " + ((bases[m].isActive == "True") ? "on' title='base actual'" : "off' title='base pasada'") + "></div></td>";
-            campos += "<td align='center'><span class='"+((bases[m].isCompatible == "True") ? "glyphicon glyphicon-ok' title='correcto'" :"glyphicon glyphicon-remove' title='incorrecto'")+" aria-hidden='true' style='font-size:20px;'></span></td>";
+            //campos += "<td align='center'><span class='"+((bases[m].isCompatible == "True") ? "glyphicon glyphicon-ok' title='correcto'" :"glyphicon glyphicon-remove' title='incorrecto'")+" aria-hidden='true' style='font-size:20px;'></span></td>";
             campos += "</tr>";
         }
         str += "<div class='panel panel-default'>";
@@ -379,7 +380,7 @@ function crearPanels(campanias,tipo)
         str += "<h5 class='panel-title'>";
         str += "<div class='row'>";
         str += "<div class='col-sm-12 col-md-6 col-lg-6' style='padding-top: 10px;'>";
-        str += "<a data-toggle='collapse' data-parent='#panel_" + tipo + "' href='#tabla_" + tipo + n + "'><span style='font-weight:bold'>CAMPAÑA:</span> " + keyCampania[n] + "</a></div>";
+        str += "<a data-toggle='collapse' data-parent='#panel_" + tipo + "' href='#tabla_" + tipo + n + "' style='color:#5cb85c;'><span style='font-weight:bold'>CAMPAÑA:</span> " + keyCampania[n] + "</a></div>";
         str += "</div>";
         str += "</h5>";
         str += "</div>";
@@ -404,9 +405,9 @@ function createTable(cadena)
     my += '<th align="center">Nro</th>';
     my += '<th align="center">Usuario</th>';
     my += '<th align="center">Fecha creación</th>';
+    my += '<th align="center">Nombre archivo</th>';
     my += '<th align="center">Archivo</th>';
     my += '<th align="center">Estado</th>';
-    my += '<th align="center" width="10%">Formato<br>compatible</th>';
     my += '</tr>';
     my += '</thead>';
     my += '<tbody>';
@@ -414,4 +415,50 @@ function createTable(cadena)
     my += '</tbody>';
     my += '</table>';
     return my;
+}
+
+function verStatus()
+{
+    var fecha_buscar = $("#fechaI_buscar").val();
+    var campania = $("#campania_buscar").val();
+    if (fecha_buscar != "" && campania != "")
+    {
+        data.campaniaId = campania * 1;
+        data.fechaBase = fecha_buscar;
+        $(".loader").toggle(true);
+        $.ajax({
+            method: "POST",
+            url: "/SubidaBase/verStatus",
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            dataType: "text",
+            success: function (response)
+            {
+                var datos = response.split("£");
+                var campos = null;
+                var str = "";
+                var busc = "";
+                for (var i = 0; i < datos.length; i++)
+                {
+                    campos = datos[i].split("|");
+                    campos += "<tr>";
+                    campos += "<td align='center'>" + campos[2] + "</td>";
+                    campos += "<td align='center'>" + campos[0] + "</td>";
+                    campos += "<td align='center'>" + campos[1] + "</td>";
+                    campos += "</tr>";
+                    busc += campos[2]+";";
+                }
+                mostrarFaltantes(busc.substring(0, busc.length - 1));
+                $("#dvStatus").modal("show");
+            }
+        });
+    } else
+    {
+        alert("Debes escoger la fecha y la campaña");
+    }
+}
+
+function mostrarFaltantes()
+{
+    //faltaaaaaa!!!!!!!!
 }

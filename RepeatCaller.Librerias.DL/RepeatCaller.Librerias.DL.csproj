@@ -43,8 +43,15 @@
     <Compile Include="dlBase.cs" />
     <Compile Include="dlCampania.cs" />
     <Compile Include="dlLogin.cs" />
+    <Compile Include="dlReporte.cs" />
     <Compile Include="dlUsuarios.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RepeatCaller.Librerias.EL\RepeatCaller.Librerias.EL.csproj">
+      <Project>{4ce6fda9-252e-441c-822d-f971b0ffd9ab}</Project>
+      <Name>RepeatCaller.Librerias.EL</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

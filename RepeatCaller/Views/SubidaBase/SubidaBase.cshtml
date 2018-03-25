@@ -39,8 +39,11 @@
             <div class="col-sm-12 col-md-1 col-lg-1" style="padding-right: 100px;">
                 <button class="btn btn-success" onclick="buscarBase();"><span class="glyphicon glyphicon-search" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Buscar</button>
             </div>
-            <div class="col-sm-12 col-md-1 col-lg-1">
+            <div class="col-sm-12 col-md-1 col-lg-1" style="padding-right: 130px;">
                 <button class="btn btn-warning" onclick="abrirModalUpload();"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Nueva base</button>
+            </div>
+            <div class="col-sm-12 col-md-1 col-lg-1">
+                <button class="btn btn-default" onclick="verStatus();"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Status</button>
             </div>
         </div>
     </div>
@@ -116,6 +119,31 @@
         <span class="closebtn" onclick="quitarAlerta(this);">&times;</span>
         <strong>Alerta: </strong>Ya existe una base cargada.<br />
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>Hora de subida:<span id="fhCreacion"></span></span>
+    </div>
+</div>
+
+<div class="modal fade" id="dvStatus" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="dvStatusLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width:30%;">
+        <div class="modal-content">
+            <div class="modal-body" style="padding-bottom:0px;padding-top:10px;">
+                <fieldset class="border:solid 1px;padding:10px;">
+                    <legend class="ng-binding" style="width:auto;border-bottom:0;margin-bottom:10px;font-size:16px;font-style:italic;color:#B7B7B7;" id="nameCampFecha"></legend>
+                    <table class="table table-bordered">
+                        <thead class="blue-grey lighten-4">
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Fecha creacion</th>
+                                <th>Nombre Archivo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listBases"></tbody>
+                    </table>
+                </fieldset>
+            </div>
+            <div class="modal-footer" style="padding-top:5px;padding-bottom:5px;">
+                <button class="btn btn-success" data-dismiss="modal" aria-hidden="true">Ok</button>
+            </div>
+        </div>
     </div>
 </div>
 

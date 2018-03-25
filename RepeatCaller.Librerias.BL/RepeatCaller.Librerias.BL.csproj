@@ -46,6 +46,7 @@
     <Compile Include="blCampania.cs" />
     <Compile Include="blGeneral.cs" />
     <Compile Include="blLogin.cs" />
+    <Compile Include="blReporte.cs" />
     <Compile Include="blUsuarios.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -57,6 +58,10 @@
     <ProjectReference Include="..\RepeatCaller.Librerias.DL\RepeatCaller.Librerias.DL.csproj">
       <Project>{dae1183f-f9d6-4d5f-917a-738a7ba79fa2}</Project>
       <Name>RepeatCaller.Librerias.DL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RepeatCaller.Librerias.EL\RepeatCaller.Librerias.EL.csproj">
+      <Project>{4ce6fda9-252e-441c-822d-f971b0ffd9ab}</Project>
+      <Name>RepeatCaller.Librerias.EL</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
