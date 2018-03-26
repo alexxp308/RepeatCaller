@@ -64,17 +64,19 @@ function traerReporte(elem)
         url: "/Reporte/Reportes",
         contentType: "application/json",
         data: JSON.stringify(data),
-        dataType: "json",
+        dataType: "text",
         success: function (response)
         {
+            debugger;
             $(".loader").toggle(false);
+            location.href = response;
             //console.log(response);
-            crearExcel(response);
+            //crearExcel(response);
         }
     });
 }
 
-function crearExcel(data)
+/*function crearExcel(data)
 {
     var uri = 'data:application/vnd.ms-excel;base64,'
         , tmplWorkbookXML = '<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'
@@ -100,6 +102,7 @@ function crearExcel(data)
     var keysFila = null;
     var filas = null;
     var valor = null;
+    debugger;
     for (var i = 0; i < keysData.length; i++)
     {
         filas = data[keysData[i]];
@@ -139,7 +142,7 @@ function crearExcel(data)
         worksheetsXML += format(tmplWorksheetXML, ctx);
         rowsXML = "";
     }
-
+    debugger;
     ctx = { created: (new Date()).getTime(), worksheets: worksheetsXML };
     workbookXML = format(tmplWorkbookXML, ctx);
 
@@ -151,4 +154,4 @@ function crearExcel(data)
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-}
+}*/

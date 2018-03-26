@@ -470,42 +470,6 @@ BEGIN
 END
 
 exec USP_OBTENER_BASES 0,'0','2018-03-21'
-select * from Reporte_CDR
-select * from Reporte_TIPI
-
-SELECT c.[Usuario/Agente],c.Fecha,c.MSISDN,t.TITULO_INTERACCION FROM 
-BASE B,Reporte_CDR c,Reporte_TIPI t,BASE B2 
-where c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
-and b.campaniaId=1 and B.campaniaId = B2.campaniaId and B.baseId = c.BaseId and B2.baseId = T.BaseId and b.fechaBase between '2018-03-21'
-
-SELECT c.[Usuario/Agente],c.Fecha,c.MSISDN,t.TITULO_INTERACCION FROM 
-Reporte_CDR c,Reporte_TIPI t
-where c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
-
-
-
-
-select c.Fecha,c.MSISDN,COUNT(*) TOTAL from Reporte_CDR c,Reporte_TIPI t where 
-c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
-group by c.Fecha,c.MSISDN
-
-select t.TITULO_INTERACCION,c.Fecha,c.MSISDN,COUNT(*) TOTAL from Reporte_CDR c,Reporte_TIPI t where 
-c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
-group by c.Fecha,c.MSISDN,t.TITULO_INTERACCION
-
-select c.[Usuario/Agente],c.Fecha,c.MSISDN,COUNT(*) TOTAL from Reporte_CDR c,Reporte_TIPI t where 
-c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
-group by c.Fecha,c.MSISDN,c.[Usuario/Agente]
-
-select r.BaseId,t.BaseId from BASE B,Reporte_CDR R,BASE B2,Reporte_TIPI T 
-WHERE B.baseId = R.BaseId and B2.baseId = T.BaseId and B.campaniaId = B2.campaniaId
-
-select * from Reporte_CDR
-delete from Reporte_CDR where BaseId=2 or BaseId=3
-
-select * from base
-
-select * from BASE where fechaBase between '2018-03-22' and '2018-03-22'
 
 alter procedure USP_REPORTE_CRUCE_DATOS(
 	@campaniaId int,
@@ -517,28 +481,28 @@ BEGIN
 	declare @fechaInicial varchar(10) = convert(varchar(10),dateadd(DAY,-15,convert(date,@fechaFinal)),120)
 	
 	-- DETALLE ------------------------------------------------------------------------------------------------
-	SELECT top 1000 c.[Usuario/Agente],c.Fecha,c.MSISDN,t.TITULO_INTERACCION FROM 
+	SELECT c.[Usuario/Agente],c.Fecha,c.MSISDN,t.TITULO_INTERACCION FROM 
 	Reporte_CDR c,Reporte_TIPI t
 	where c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
 	and c.campaniaId=@campaniaId and c.campaniaId = t.campaniaId and c.fechaBase = t.fechaBase and c.fechaBase between @fechaInicial AND @fechaFinal
 	
 	-- TOTALES NUMERO ------------------------------------------------------------------------------------------------
-	select top 1000 c.Fecha,c.MSISDN,COUNT(*) TOTAL from 
+	select c.Fecha,c.MSISDN,COUNT(*) TOTAL from 
 	Reporte_CDR c,Reporte_TIPI t
 	where c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
 	and c.campaniaId=@campaniaId and c.campaniaId = t.campaniaId and c.fechaBase = t.fechaBase and c.fechaBase between @fechaInicial AND @fechaFinal
 	group by c.Fecha,c.MSISDN
 	
 	-- TITULO INTERACCION ---------------------------------------------------------------------------------------------
-	select top 1000 t.TITULO_INTERACCION,c.Fecha,c.MSISDN,COUNT(*) TOTAL from 
-	Reporte_CDR c,Reporte_TIPI t ,BASE B,BASE B2
+	select t.TITULO_INTERACCION,c.Fecha,c.MSISDN,COUNT(*) TOTAL from 
+	Reporte_CDR c,Reporte_TIPI t
 	where c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
 	and c.campaniaId=@campaniaId and c.campaniaId = t.campaniaId and c.fechaBase = t.fechaBase and c.fechaBase between @fechaInicial AND @fechaFinal
 	group by c.Fecha,c.MSISDN,t.TITULO_INTERACCION
 	
 	-- TOTALES AGENTE --------------------------------------------------------------------------------------------------
-	select top 1000 c.[Usuario/Agente],c.Fecha,c.MSISDN,COUNT(*) TOTAL 
-	from Reporte_CDR c,Reporte_TIPI t ,BASE B,BASE B2
+	select c.[Usuario/Agente],c.Fecha,c.MSISDN,COUNT(*) TOTAL 
+	from Reporte_CDR c,Reporte_TIPI t
 	where c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
 	and c.campaniaId=@campaniaId and c.campaniaId = t.campaniaId and c.fechaBase = t.fechaBase and c.fechaBase between @fechaInicial AND @fechaFinal
 	group by c.Fecha,c.MSISDN,c.[Usuario/Agente]
@@ -546,31 +510,21 @@ END
 
 EXEC USP_REPORTE_CRUCE_DATOS 1,'2018-03-24'
 
-
 select * from BASE
 
+select t.FECHA_DE_CREACION,t.TITULO_INTERACCION,t.TELEFONO,COUNT(*) TOTAL from 
+Reporte_CDR c,Reporte_TIPI t
+where c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
+and c.campaniaId=1 and c.campaniaId = t.campaniaId and c.fechaBase = t.fechaBase and c.fechaBase between '2018-03-22' AND '2018-03-25'
+group by t.FECHA_DE_CREACION,t.TITULO_INTERACCION,t.TELEFONO
 
-
-select c.Fecha,c.MSISDN,COUNT(*) TOTAL from 
-	Reporte_CDR c,Reporte_TIPI t
-	where c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
-	and c.campaniaId = t.campaniaId and c.fechaBase = t.fechaBase and c.fechaBase between '2018-03-20' AND '2018-03-23'
-	group by c.Fecha,c.MSISDN
-
-	SELECT c.[Usuario/Agente],c.Fecha,c.MSISDN,t.TITULO_INTERACCION FROM 
-	BASE B,Reporte_CDR c,Reporte_TIPI t,BASE B2 
-	where c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
-	and b.campaniaId=1 and B.campaniaId = B2.campaniaId and B.baseId = c.BaseId and B2.baseId = T.BaseId and 
-	b.fechaBase between '2018-03-20' AND '2018-03-22'
-
-
-select t.TITULO_INTERACCION,c.Fecha,c.MSISDN,COUNT(*) TOTAL from 
-	Reporte_CDR c,Reporte_TIPI t ,BASE B,BASE B2
-	where c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
-	and b.campaniaId=1 and B.campaniaId = B2.campaniaId and B.baseId = c.BaseId and B2.baseId = T.BaseId and 
-	b.fechaBase between '2018-03-20' AND '2018-03-22'
-	group by c.Fecha,c.MSISDN,t.TITULO_INTERACCION
-	
-	select * from Reporte_CDR
-	select * from Reporte_IVR
-	select * from Reporte_TIPI
+create table t1(
+	camp1 int,
+	cam2 int
+)
+create table t2(
+	camp3 int,
+	cam4 int
+)
+select * from t2
+select camp1,cam2 from t1 ,t2 where (camp1!=camp3 and cam2=cam4) or (camp1=camp3 and cam2!=cam4)

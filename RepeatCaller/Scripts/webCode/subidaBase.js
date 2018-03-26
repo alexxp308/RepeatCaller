@@ -399,6 +399,7 @@ function crearPanels(campanias,tipo)
 function createTable(cadena)
 {
     var my = "";
+    my += '<div class="table-responsive">';
     my += '<table class="table table-bordered">';
     my += '<thead class="blue-grey lighten-4">';
     my += '<tr class="success">';
@@ -414,6 +415,7 @@ function createTable(cadena)
     my += cadena;
     my += '</tbody>';
     my += '</table>';
+    my += '</div>';
     return my;
 }
 
@@ -423,6 +425,7 @@ function verStatus()
     var campania = $("#campania_buscar").val();
     if (fecha_buscar != "" && campania != "")
     {
+        var data = {};
         data.campaniaId = campania * 1;
         data.fechaBase = fecha_buscar;
         $(".loader").toggle(true);
@@ -434,21 +437,27 @@ function verStatus()
             dataType: "text",
             success: function (response)
             {
-                var datos = response.split("£");
-                var campos = null;
-                var str = "";
-                var busc = "";
-                for (var i = 0; i < datos.length; i++)
+                $(".loader").toggle(false);
+                if (response.length > 0)
                 {
-                    campos = datos[i].split("|");
-                    campos += "<tr>";
-                    campos += "<td align='center'>" + campos[2] + "</td>";
-                    campos += "<td align='center'>" + campos[0] + "</td>";
-                    campos += "<td align='center'>" + campos[1] + "</td>";
-                    campos += "</tr>";
-                    busc += campos[2]+";";
+                    var datos = response.split("£");
+                    var campos = null;
+                    var str = "";
+                    var busc = "";
+                    for (var i = 0; i < datos.length; i++)
+                    {
+                        campos = datos[i].split("|");
+                        str += "<tr>";
+                        str += "<td align='center'>" + campos[2] + "</td>";
+                        str += "<td align='center'>" + campos[0] + "</td>";
+                        str += "<td align='center'>" + campos[1] + "</td>";
+                        str += "</tr>";
+                        busc += campos[2] + ";";
+                    }
+                    //mostrarFaltantes(busc.substr(-1));
+                    $("#nameCampFecha").html($("#campania_buscar option:selected").text() + "-" + fecha_buscar);
+                    $("#listBases").html(str);
                 }
-                mostrarFaltantes(busc.substring(0, busc.length - 1));
                 $("#dvStatus").modal("show");
             }
         });
@@ -458,7 +467,19 @@ function verStatus()
     }
 }
 
-function mostrarFaltantes()
+/*function mostrarFaltantes(cadena)
 {
-    //faltaaaaaa!!!!!!!!
-}
+    var alt = "";
+    if (cadena.indexOf("CDR") == -1)
+    {
+        alt += "Falta la base CDR,";
+    } else if (cadena.indexOf("TIPI") == -1)
+    {
+        alt += "Falta la base TIPI,";
+    } else if (cadena.indexOf("IVR") == -1)
+    {
+        alt += "Falta la base IVR,";
+    }
+
+    return (alt == "") ? alt : alt.substr(-1);
+}*/

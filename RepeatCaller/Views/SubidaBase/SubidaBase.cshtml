@@ -123,21 +123,23 @@
 </div>
 
 <div class="modal fade" id="dvStatus" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="dvStatusLabel" aria-hidden="true">
-    <div class="modal-dialog" style="width:30%;">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-body" style="padding-bottom:0px;padding-top:10px;">
                 <fieldset class="border:solid 1px;padding:10px;">
                     <legend class="ng-binding" style="width:auto;border-bottom:0;margin-bottom:10px;font-size:16px;font-style:italic;color:#B7B7B7;" id="nameCampFecha"></legend>
-                    <table class="table table-bordered">
-                        <thead class="blue-grey lighten-4">
-                            <tr>
-                                <th>Tipo</th>
-                                <th>Fecha creacion</th>
-                                <th>Nombre Archivo</th>
-                            </tr>
-                        </thead>
-                        <tbody id="listBases"></tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="blue-grey lighten-4">
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Fecha creacion</th>
+                                    <th>Nombre Archivo</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listBases"></tbody>
+                        </table>
+                    </div>
                 </fieldset>
             </div>
             <div class="modal-footer" style="padding-top:5px;padding-bottom:5px;">
