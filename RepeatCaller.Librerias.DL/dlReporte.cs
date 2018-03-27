@@ -85,5 +85,52 @@ namespace RepeatCaller.Librerias.DL
 
             return oelReporteCruce;
         }
+
+        public elReporteSinCruce ReporteSinCruceDatos(int campaniaId, string fechaBase, SqlConnection cn)
+        {
+            elReporteSinCruce oelReporteSinCruce = new elReporteSinCruce();
+            List<elrcTituloInteraccion> lelrcTituloInteraccion = null;
+            List<elrcTotalAgente> lelrcTotalAgente = null;
+            SqlCommand cmd = new SqlCommand("USP_REPORTE_SIN_CRUCE_DATOS", cn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.CommandTimeout = 1800;
+            cmd.Parameters.AddWithValue("@campaniaId", campaniaId);
+            cmd.Parameters.AddWithValue("@fechaBase", fechaBase);
+            SqlDataReader drd = cmd.ExecuteReader();
+            if (drd != null)
+            {
+                elrcTituloInteraccion oelrcTituloInteraccion;
+                lelrcTituloInteraccion = new List<elrcTituloInteraccion>();
+                while (drd.Read())
+                {
+                    oelrcTituloInteraccion = new elrcTituloInteraccion();
+                    oelrcTituloInteraccion.FechaLlamada = drd.GetString(0);
+                    oelrcTituloInteraccion.TituloInteraccion = drd.GetString(1);
+                    oelrcTituloInteraccion.Numero = drd.GetString(2);
+                    oelrcTituloInteraccion.Total = drd.GetInt32(3);
+                    lelrcTituloInteraccion.Add(oelrcTituloInteraccion);
+                }
+                oelReporteSinCruce.elTituloInteraccion = lelrcTituloInteraccion;
+                if (drd.NextResult())
+                {
+                    elrcTotalAgente oelrcTotalAgente;
+                    lelrcTotalAgente = new List<elrcTotalAgente>();
+                    while (drd.Read())
+                    {
+                        oelrcTotalAgente = new elrcTotalAgente();
+                        oelrcTotalAgente.Agente = drd.GetString(0);
+                        oelrcTotalAgente.FechaLlamada = drd.GetString(1);
+                        oelrcTotalAgente.Numero = drd.GetString(2);
+                        oelrcTotalAgente.Total = drd.GetInt32(3);
+                        lelrcTotalAgente.Add(oelrcTotalAgente);
+                    }
+                    oelReporteSinCruce.elTotalAgente = lelrcTotalAgente;
+                }
+
+                drd.Close();
+            }
+
+            return oelReporteSinCruce;
+        }
     }
 }

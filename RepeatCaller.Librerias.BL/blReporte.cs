@@ -30,5 +30,25 @@ namespace RepeatCaller.Librerias.BL
             }
             return oelReporteCruce;
         }
+
+        public elReporteSinCruce ReporteSinCruceDatos(int campaniaId, string fechaBase)
+        {
+            elReporteSinCruce oelReporteSinCruce = new elReporteSinCruce();
+            using (SqlConnection con = new SqlConnection(ConnectionString))
+            {
+                try
+                {
+                    con.Open();
+                    dlReporte odlReporte = new dlReporte();
+                    oelReporteSinCruce = odlReporte.ReporteSinCruceDatos(campaniaId, fechaBase, con);
+                }
+                catch (Exception ex)
+                {
+                    string url = HttpContext.Current.Request.UrlReferrer.ToString();
+                    Log.Error(logPath, "blReporte_ReporteSinCruceDatos", url, ex);
+                }
+            }
+            return oelReporteSinCruce;
+        }
     }
 }

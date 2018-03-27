@@ -1,0 +1,7 @@
+Nombre:		blReporte_ReporteSinCruceDatos
+URL:		http://localhost:1468/Reporte
+Mensaje:	La conversión especificada no es válida.
+Detalle:	en System.Data.SqlClient.SqlBuffer.get_Int32()
+   en System.Data.SqlClient.SqlDataReader.GetInt32(Int32 i)
+   en RepeatCaller.Librerias.DL.dlReporte.ReporteSinCruceDatos(Int32 campaniaId, String fechaBase, SqlConnection cn) en D:\DESARROLLO_ALEXANDER_HUERTA_MENACHO\Reporte_Repeat_Caller\RepeatCaller\RepeatCaller.Librerias.DL\dlReporte.cs:línea 110
+   en RepeatCaller.Librerias.BL.blReporte.ReporteSinCruceDatos(Int32 campaniaId, String fechaBase) en D:\DESARROLLO_ALEXANDER_HUERTA_MENACHO\Reporte_Repeat_Caller\RepeatCaller\RepeatCaller.Librerias.BL\blReporte.cs:línea 43

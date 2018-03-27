@@ -164,6 +164,7 @@ end
 select * from CAMPANIA
 
 create table Reporte_CDR(
+	intCDR int primary key identity(1, 1),
 	BaseId INT,
 	campaniaId int,
 	fechaBase varchar(10),
@@ -185,7 +186,6 @@ create table Reporte_CDR(
 	[Descripción Transferencia] varchar(100),
 	[Tipo Transferencia] varchar(50)
 )
-
 
 create table BASE(
 baseId int primary key identity(1, 1),
@@ -274,13 +274,18 @@ begin
 	delete t from REPORTE_CDR t inner join BASE b on b.isActive=1 and b.tipo='CDR' and b.campaniaId = @campaniaId  and b.fechaBase = @fechaBase and t.BaseId = b.baseId
 	update BASE set isActive=0 where isActive=1 and tipo='CDR' and campaniaId=@campaniaId and fechaBase=@fechaBase
 	update BASE set isActive=1 where baseId = @baseId;
-	insert into Reporte_CDR select * from @tabla
+	insert into Reporte_CDR(BaseId,campaniaId,fechaBase,Campaña,BPO,Canal,MSISDN,
+	Fecha,Hora,Duracion,[Codigo de skill],[Nombre de skill],[Usuario/Agente],[ID de agente],
+	[Nombre de agente],[Cortada por],Estado,[Codigo Transferencia],[Descripción Transferencia],
+	[Tipo Transferencia]) select * from @tabla
 	select COUNT(*) from REPORTE_CDR where baseId = @baseId;
 end
+
 select *from base
-select * from REPORTE_TIPI
+select * from REPORTE_CDR
 
 create table Reporte_IVR(
+	intIVR int primary key identity(1, 1),
 	BaseId INT,
 	campaniaId int,
 	fechaBase varchar(10),
@@ -333,11 +338,16 @@ begin
 	delete t from REPORTE_IVR t inner join BASE b on b.isActive=1 and b.tipo='IVR' and b.campaniaId = @campaniaId  and b.fechaBase = @fechaBase and t.BaseId = b.baseId
 	update BASE set isActive=0 where isActive=1 and tipo='IVR' and campaniaId=@campaniaId and fechaBase=@fechaBase
 	update BASE set isActive=1 where baseId = @baseId;
-	insert into Reporte_IVR select * from @tabla
+	insert into Reporte_IVR(BaseId,campaniaId,fechaBase,[Time Segment],
+	[USER],[NOMBRE DEL ASESOR],[ANY],[RESPUESTA PREGUNTA 1],
+	[RESPUESTA PREGUNTA 2],[TIEMPO MEDIO DE RESPUESTA PREGUNTA 1],
+	[TIEMPO MEDIO DE RESPUESTA PREGUNTA 2],[TIEMPO TOTAL DE PERMANENCIA EN EL IVR],
+	[CORTE DE LLAMADA (ASESOR, IVR O CLIENTE)],[CANAL],[BPO (PROVEEDOR)],[CAMPAÑA],[SKILL]) select * from @tabla
 	select COUNT(*) from REPORTE_IVR where baseId = @baseId;
 end
 
 CREATE TABLE Reporte_TIPI(
+idTIPI int primary key identity(1, 1),
 BaseId INT,
 campaniaId int,
 	fechaBase varchar(10),
@@ -396,7 +406,11 @@ begin
 	delete t from REPORTE_TIPI t inner join BASE b on b.isActive=1 and b.tipo='TIPI' and b.campaniaId = @campaniaId  and b.fechaBase = @fechaBase and t.BaseId = b.baseId
 	update BASE set isActive=0 where isActive=1 and tipo='TIPI' and campaniaId=@campaniaId and fechaBase=@fechaBase
 	update BASE set isActive=1 where baseId = @baseId;
-	insert into Reporte_TIPI select * from @tabla
+	insert into Reporte_TIPI(BaseId,campaniaId,fechaBase,FECHA_CREACION,FECHA_DE_CREACION,
+	TIPO_LOGIN,LOGIN_AGENTE,[NOMBRE DE ASESOR],ID_INTERACCION,TITULO_INTERACCION,
+	TIPO_INTERACCION,CLASE_INTERACCION,SUBCLASE_INTERACCION,NOMBRE_CONTACO,
+	APELLIDO_CONTACTO,TELEFONO,CICLO_FACTURACION,MODALIDAD,
+	SERVICIO_AFECTADO,INCONVENIENTE) select * from @tabla
 	select COUNT(*) from Reporte_TIPI where baseId = @baseId;
 end
 
@@ -510,21 +524,67 @@ END
 
 EXEC USP_REPORTE_CRUCE_DATOS 1,'2018-03-24'
 
-select * from BASE
 
-select t.FECHA_DE_CREACION,t.TITULO_INTERACCION,t.TELEFONO,COUNT(*) TOTAL from 
-Reporte_CDR c,Reporte_TIPI t
-where c.Fecha = t.FECHA_DE_CREACION and c.[Usuario/Agente] = t.LOGIN_AGENTE and ('51'+c.MSISDN) = t.TELEFONO
-and c.campaniaId=1 and c.campaniaId = t.campaniaId and c.fechaBase = t.fechaBase and c.fechaBase between '2018-03-22' AND '2018-03-25'
-group by t.FECHA_DE_CREACION,t.TITULO_INTERACCION,t.TELEFONO
+alter procedure USP_REPORTE_SIN_CRUCE_DATOS(
+	@campaniaId int,
+	@fechaBase varchar(10)
+)
+AS
+BEGIN
+	declare @fechaFinal varchar(10) = convert(varchar(10),dateadd(DAY,-1,convert(date,@fechaBase)),120)
+	declare @fechaInicial varchar(10) = convert(varchar(10),dateadd(DAY,-15,convert(date,@fechaFinal)),120)
 
-create table t1(
-	camp1 int,
-	cam2 int
-)
-create table t2(
-	camp3 int,
-	cam4 int
-)
+	-- Reporte general de totales Titulo interacción -------------------------------------------------------
+	select t.FECHA_DE_CREACION,t.TITULO_INTERACCION,t.TELEFONO,COUNT(*) TOTAL from Reporte_TIPI t
+	where t.campaniaId=@campaniaId and t.fechaBase between @fechaInicial AND @fechaFinal and t.idTIPI not in 
+	(select t1.idTIPI from Reporte_TIPI t1 inner join Reporte_CDR c 
+	on c.Fecha = t1.FECHA_DE_CREACION and ('51'+c.MSISDN)=t1.TELEFONO)
+	AND FECHA_CREACION IS NOT NULL and TITULO_INTERACCION IS NOT NULL and TELEFONO IS NOT NULL
+	group by t.FECHA_DE_CREACION,t.TITULO_INTERACCION,t.TELEFONO
+	
+	-- Reporte general de totales Agente  -------------------------------------------------------
+	select t.FECHA_DE_CREACION,t.LOGIN_AGENTE,t.TELEFONO,COUNT(*) TOTAL from Reporte_TIPI t
+	where t.campaniaId=@campaniaId and t.fechaBase between @fechaInicial AND @fechaFinal and t.idTIPI not in 
+	(select t1.idTIPI from Reporte_TIPI t1 inner join Reporte_CDR c 
+	on c.Fecha = t1.FECHA_DE_CREACION and ('51'+c.MSISDN)=t1.TELEFONO and c.[Usuario/Agente] = t1.LOGIN_AGENTE)
+	AND FECHA_CREACION IS NOT NULL and TITULO_INTERACCION IS NOT NULL and TELEFONO IS NOT NULL
+	group by t.FECHA_DE_CREACION,t.LOGIN_AGENTE,t.TELEFONO
+END
+select * from Reporte_TIPI
+
+EXEC USP_REPORTE_SIN_CRUCE_DATOS 1,'2018-03-28'
+
+select camp1,cam2 from t1 
+where not (camp1 in (select camp3 from t2)) and (cam2 in (select cam4 from t2))
+or (camp1 in (select camp3 from t2)) and not (cam2 in (select cam4 from t2))
+
+select * from t1
 select * from t2
-select camp1,cam2 from t1 ,t2 where (camp1!=camp3 and cam2=cam4) or (camp1=camp3 and cam2!=cam4)
+
+select camp1,cam2 from t1 
+where (camp1 not in (select camp3 from t2)) or (cam2 not in (select cam4 from t2))
+
+select
+	ta.id1 into #tb
+from t1 ta inner join t2 tb
+	on ta.camp1 = tb.camp3 and ta.cam2 = tb.cam4
+	
+select * from t1 where id1 not in (select ta.id1 from t1 ta inner join t2 tb on ta.camp1 = tb.camp3 
+and ta.cam2 = tb.cam4)
+
+
+
+select t.TITULO_INTERACCION,t.FECHA_DE_CREACION,COUNT(*) TOTAL,AVG(CASE WHEN convert(int,[RESPUESTA PREGUNTA 1]) IN(9,8) then 100 
+when convert(int,[RESPUESTA PREGUNTA 1])=7 then 0 else -100 end) NPS from 
+Reporte_TIPI t,Reporte_IVR i
+where i.[Time Segment] = t.FECHA_DE_CREACION and i.[USER] = t.LOGIN_AGENTE and ('51'+i.[ANY]) = t.TELEFONO
+GROUP BY t.TITULO_INTERACCION,t.FECHA_DE_CREACION,t.LOGIN_AGENTE
+select * from Reporte_TIPI
+
+
+select CASE WHEN [RESPUESTA PREGUNTA 1] IN(9,8) then 100 
+when [RESPUESTA PREGUNTA 1]=7 then 0 else -100 end from Reporte_IVR;
+
+select AVG(CASE WHEN convert(int,[RESPUESTA PREGUNTA 1]) IN(9,8) then 100 
+when [RESPUESTA PREGUNTA 1]=7 then 0 else -100 end) 
+from Reporte_IVR
