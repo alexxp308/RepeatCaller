@@ -44,3 +44,7 @@ div.esfera {
     div.esfera.off {
         background: radial-gradient(at top left, #F51E00 20%, #630C00);
     }
+
+input[data-readonly] {
+    pointer-events: none;
+}

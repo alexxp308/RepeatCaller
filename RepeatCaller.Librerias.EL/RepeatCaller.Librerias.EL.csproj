@@ -45,6 +45,7 @@
     <Compile Include="elrcTotalAgente.cs" />
     <Compile Include="elrcTotalesNumero.cs" />
     <Compile Include="elReporteCruce.cs" />
+    <Compile Include="elReporteIVR.cs" />
     <Compile Include="elReporteSinCruce.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

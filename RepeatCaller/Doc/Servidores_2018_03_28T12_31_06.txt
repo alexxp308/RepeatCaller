@@ -1,0 +1,28 @@
+servidor: DMMY
+usuario: Administrador
+clave: MdySrvDMMY2@16
+ip local: 169.254.8.191
+ip publica: 158.69.16.71 <-
+-------------------------------------------
+SONICWALL (Gerald)
+ip: 168.121.44.42
+username: gdiaz
+password: w1c0nt4ct2015
+-------------------------------------------
+ip:168.121.51.42
+SONICWALL (Ghian) carlos.tafur@mdybpo.com
+username: gtafur
+password: 123456
+-------------------------------------------
+dir /OGN /S > back.txt
+dir /b "C:\My Path" > myFiles.txt
+SERVIDORES DE COLONIAL --- encargado -> antonio.solis@mdybpo.com
+1.
+	IP: 10.200.52.102
+	username: administrador
+	password: mdys3rv3r20199!**
+2.
+-------------------------------------------------
+nube:
+aplicaciones:
+-web reserva -> http://158.69.241.122:1603/ *** administrador colonial: 45366630 / Mdy123456 -- karen.gutierrez@hernandez-randich.com

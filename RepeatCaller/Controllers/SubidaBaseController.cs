@@ -8,9 +8,10 @@ using System.Web.Mvc;
 
 namespace RepeatCaller.Controllers
 {
+    [Authorize]
     public class SubidaBaseController : Controller
     {
-        // GET: SubidaBase
+        [Authorize(Roles = "Supervisor,Ejecutivo")]
         public ActionResult Index()
         {
             return View("~/Views/SubidaBase/SubidaBase.cshtml");

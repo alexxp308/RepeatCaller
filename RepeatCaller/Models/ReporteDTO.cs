@@ -10,5 +10,6 @@ namespace RepeatCaller.Models
         public int campaniaId { get; set; }
         public string fechaBase { get; set; }
         public int tipo { get; set; }
+        public string fechaFinal { get; set; }
     }
 }

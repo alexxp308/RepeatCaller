@@ -1,0 +1,7 @@
+Nombre:		blBase_verStatus
+URL:		http://localhost:1468/SubidaBase
+Mensaje:	La longitud no puede ser inferior a cero.
+Nombre del parámetro: length
+Detalle:	en System.String.Substring(Int32 startIndex, Int32 length)
+   en RepeatCaller.Librerias.DL.dlBase.verStatus(Int32 campaniaId, String fechaBase, SqlConnection cn) en D:\DESARROLLO_ALEXANDER_HUERTA_MENACHO\Reporte_Repeat_Caller\RepeatCaller\RepeatCaller.Librerias.DL\dlBase.cs:línea 107
+   en RepeatCaller.Librerias.BL.blBase.verStatus(Int32 campaniaId, String fechaBase) en D:\DESARROLLO_ALEXANDER_HUERTA_MENACHO\Reporte_Repeat_Caller\RepeatCaller\RepeatCaller.Librerias.BL\blBase.cs:línea 121

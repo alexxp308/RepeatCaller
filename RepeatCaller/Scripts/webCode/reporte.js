@@ -2,11 +2,51 @@
 {
     listarCampañas(window.cookie.getCookie()["sedeId"]);
     getMax(getcurrentDate());
+    var formulario = document.getElementById("formReporte");
+    formulario.onsubmit = function (e)
+    {
+        e.preventDefault();
+        traerReporte();
+    }
 });
 
 function getMax(today)
 {
     //$("#fecha").attr("max", today);
+    //$("#fechaFinal").attr("max", today);
+}
+
+function mostrarDiv(elem)
+{
+    if (elem.value == "3")
+    {
+        document.getElementById("divff").style.display = "block";
+        document.getElementById("ini").innerHTML = " inicial";
+        document.getElementById("fechaFinal").setAttribute("required", "required");
+    } else
+    {
+        document.getElementById("divff").style.display = "none";
+        document.getElementById("ini").innerHTML = "";
+        document.getElementById("fechaFinal").removeAttribute("required");
+    }
+}
+
+function validarFecha(elem)
+{
+    var ff = document.getElementById("fechaFinal");
+    if (elem.value != "")
+    {
+        ff.removeAttribute("disabled");
+        ff.setAttribute("min", elem.value);
+        if (elem.value > ff.value)
+        {
+            ff.value = "";
+        }
+    } else
+    {
+        ff.value = "";
+        ff.setAttribute("disabled", "disabled");
+    }
 }
 
 function getcurrentDate()
@@ -35,7 +75,7 @@ function listarCampañas(sedeId)
             if (response.length > 0)
             {
                 var campanias = response.split("#");
-                var str = "<option value='0'>--SELECCIONAR--</option>";
+                var str = "<option value=''>--SELECCIONAR--</option>";
                 var campania = null;
                 for (var i = 0; i < campanias.length; i++)
                 {
@@ -52,12 +92,15 @@ function listarCampañas(sedeId)
     });
 }
 
-function traerReporte(elem)
+function traerReporte()
 {
+    //primero busqueda de todos los reportes pasados!!!! usar un ajax dentro de otro
     var data = {};
     data.campaniaId = $("#campania").val() * 1;
     data.tipo = $("#tipo").val() * 1;
     data.fechaBase = $("#fecha").val();
+    data.fechaFinal = $("#fechaFinal").val();
+
     $(".loader").toggle(true);
     $.ajax({
         method: "POST",
@@ -70,88 +113,6 @@ function traerReporte(elem)
             debugger;
             $(".loader").toggle(false);
             location.href = response;
-            //console.log(response);
-            //crearExcel(response);
         }
     });
 }
-
-/*function crearExcel(data)
-{
-    var uri = 'data:application/vnd.ms-excel;base64,'
-        , tmplWorkbookXML = '<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'
-            + '<DocumentProperties xmlns="urn:schemas-microsoft-com:office:office"><Author>Axel Richter</Author><Created>{created}</Created></DocumentProperties>'
-            + '<Styles>'
-            + '<Style ss:ID="Currency"><NumberFormat ss:Format="Currency"></NumberFormat></Style>'
-            + '<Style ss:ID="s1"><Interior ss:Color="#F0CA46" ss:Pattern="Solid"/><Alignment ss:Vertical="Center"/><Borders> <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/></Borders></Style>'
-            + '<Style ss:ID="s2"><Alignment ss:Vertical="Center"/><Borders> <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/></Borders></Style>'
-            + '<Style ss:ID="Date"><NumberFormat ss:Format="Medium Date"></NumberFormat></Style>'
-            + '</Styles>'
-            + '{worksheets}</Workbook>'
-        , tmplWorksheetXML = '<Worksheet ss:Name="{nameWS}"><Table>{rows}</Table></Worksheet>'
-        , tmplCellXML = '<Cell{attributeStyleID}><Data ss:Type="{nameType}">{data}</Data></Cell>'
-        , base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))) }
-        , format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) }
-
-    var ctx = "";
-    var workbookXML = "";
-    var worksheetsXML = "";
-    var rowsXML = "";
-
-    var keysData = Object.keys(data);
-    var keysFila = null;
-    var filas = null;
-    var valor = null;
-    debugger;
-    for (var i = 0; i < keysData.length; i++)
-    {
-        filas = data[keysData[i]];
-        keysFila = Object.keys(filas[0]);
-        for (var j = 0; j < filas.length; j++)
-        {
-            if (j == 0)
-            {
-                rowsXML += '<Row><Cell ss:MergeAcross="3"><Data ss:Type="String">' + keysData[i]+'</Data></Cell></Row>';
-                rowsXML += '<Row><Cell></Cell>';
-                for (var m = 0; m < keysFila.length; m++)
-                {
-                    ctx = {
-                        attributeStyleID: ' ss:StyleID="s1"'
-                        , nameType: 'String'
-                        , data: keysFila[m]
-                    };
-                    rowsXML += format(tmplCellXML, ctx);
-                }
-                rowsXML += '</Row>';
-            }
-
-            rowsXML += '<Row><Cell></Cell>';
-            valor = filas[j];
-            for (var z = 0; z < keysFila.length; z++)
-            {
-                ctx = {
-                    attributeStyleID:' ss:StyleID="s2"'
-                    , nameType: 'String'
-                    , data: valor[keysFila[z]]
-                };
-                rowsXML += format(tmplCellXML, ctx);
-            }
-            rowsXML += '</Row>'
-        }
-        ctx = { rows: rowsXML, nameWS: keysData[i] || 'Sheet' + i };
-        worksheetsXML += format(tmplWorksheetXML, ctx);
-        rowsXML = "";
-    }
-    debugger;
-    ctx = { created: (new Date()).getTime(), worksheets: worksheetsXML };
-    workbookXML = format(tmplWorkbookXML, ctx);
-
-    //console.log(workbookXML);
-
-    var link = document.createElement("A");
-    link.href = uri + base64(workbookXML);
-    link.download = 'Reporte_cruce_datos.xls' || 'Workbook.xls';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}*/

@@ -204,6 +204,7 @@
     <Content Include="Scripts\lib\jquery-1.10.2.min.js" />
     <Content Include="Scripts\lib\vendor\main.js" />
     <Content Include="Scripts\webCode\campanias.js" />
+    <Content Include="Scripts\webCode\login.js" />
     <Content Include="Scripts\webCode\reporte.js" />
     <Content Include="Scripts\webCode\subidaBase.js" />
     <Content Include="Scripts\webCode\usuarios.js" />

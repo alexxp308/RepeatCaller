@@ -3,6 +3,7 @@ using General.Librerias.CodigoUsuario;
 using RepeatCaller.Librerias.DL;
 using RepeatCaller.Librerias.EL;
 using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Web;
 #endregion
@@ -49,6 +50,26 @@ namespace RepeatCaller.Librerias.BL
                 }
             }
             return oelReporteSinCruce;
+        }
+
+        public List<elReporteIVR> ReporteIVR(int campaniaId, string fechaInicial, string fechaFinal)
+        {
+            List<elReporteIVR> oelReporteIVR = new List<elReporteIVR>();
+            using (SqlConnection con = new SqlConnection(ConnectionString))
+            {
+                try
+                {
+                    con.Open();
+                    dlReporte odlReporte = new dlReporte();
+                    oelReporteIVR = odlReporte.ReporteIVR(campaniaId, fechaInicial, fechaFinal, con);
+                }
+                catch (Exception ex)
+                {
+                    string url = HttpContext.Current.Request.UrlReferrer.ToString();
+                    Log.Error(logPath, "blReporte_ReporteIVR", url, ex);
+                }
+            }
+            return oelReporteIVR;
         }
     }
 }

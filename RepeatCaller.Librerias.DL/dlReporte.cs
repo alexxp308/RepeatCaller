@@ -132,5 +132,33 @@ namespace RepeatCaller.Librerias.DL
 
             return oelReporteSinCruce;
         }
+
+        public List<elReporteIVR> ReporteIVR(int campaniaId, string fechaInicial, string fechaFinal, SqlConnection cn)
+        {
+            List<elReporteIVR> lelReporteIVR = new List<elReporteIVR>();
+            SqlCommand cmd = new SqlCommand("USP_REPORTE_IVR", cn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.CommandTimeout = 1800;
+            cmd.Parameters.AddWithValue("@campaniaId", campaniaId);
+            cmd.Parameters.AddWithValue("@fechaInicial", fechaInicial);
+            cmd.Parameters.AddWithValue("@fechaFinal", fechaFinal);
+            SqlDataReader drd = cmd.ExecuteReader();
+            if (drd != null)
+            {
+                elReporteIVR oelReporteIVR;
+                while (drd.Read())
+                {
+                    oelReporteIVR = new elReporteIVR();
+                    oelReporteIVR.tituloInteraccion = drd.GetString(0);
+                    oelReporteIVR.FechaLlamada = drd.GetString(1);
+                    oelReporteIVR.total = drd.GetInt32(2);
+                    oelReporteIVR.NPS = drd.GetInt32(3);
+                    lelReporteIVR.Add(oelReporteIVR);
+                }
+                drd.Close();
+            }
+
+            return lelReporteIVR;
+        }
     }
 }

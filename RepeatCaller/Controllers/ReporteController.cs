@@ -216,7 +216,7 @@ namespace RepeatCaller.Controllers
                     celd4[Fila_Inicio, 4].Value = datosAgente[i].Total;
                 }
                 exclName = "Reporte_Con_Cruce_De_Datos" + DateTime.Now.ToString("yyyy_MM_ddTHH_mm_ss") + ".xls";
-                
+
             }
             else if (reporte.tipo == 2)
             {
@@ -302,7 +302,49 @@ namespace RepeatCaller.Controllers
                 }
                 exclName = "Reporte_Sin_Cruce_De_Datos" + DateTime.Now.ToString("yyyy_MM_ddTHH_mm_ss") + ".xls";
             }
+            else if (reporte.tipo == 3)
+            {
+                List<elReporteIVR> oelReporteIVR = new List<elReporteIVR>();
+                oelReporteIVR = oblReporte.ReporteIVR(reporte.campaniaId, reporte.fechaBase,reporte.fechaFinal);
 
+                celda["A2:F2"].Merge();
+                celda["A2:F2"].Value = "REPORTE IVR";
+                celda["A2:F2"].Font.Size = 16;
+                celda["A2:F2"].Font.Bold = true;
+                Hoja.Name = "Reporte_IVR";
+
+                Fila_Inicio++;
+
+                //////////////// INICIO DE CABECERA ////////////////
+                int num = 1;
+                string[] cabeceras = { "Titulo interacción", "Fecha llamada", "Total", "NPS" };
+                for (int i = 0; i < cabeceras.Length; i++)
+                {
+                    celda[Fila_Inicio, num].Font.Bold = true;
+                    celda[Fila_Inicio, num].ColumnWidth = ((i == 0) ? 100 : 15);
+                    celda[Fila_Inicio, num].Interior.Color = Color.FromArgb(56, 96, 146);
+                    celda[Fila_Inicio, num].Font.Color = Color.FromArgb(255, 255, 255);
+                    celda[Fila_Inicio, num].Font.Name = "Arial";
+                    celda[Fila_Inicio, num].HorizontalAlignment = HAlign.Center;
+                    celda[Fila_Inicio, num].Font.Size = 10;
+                    celda[Fila_Inicio, num].Value = cabeceras[i];
+                    num++;
+                }
+
+                for (int i = 0; i < oelReporteIVR.Count; i++)
+                {
+                    Fila_Inicio++;
+                    celda[Fila_Inicio, 1].HorizontalAlignment = HAlign.Left;
+                    celda[Fila_Inicio, 1].Value = oelReporteIVR[i].tituloInteraccion;
+                    celda[Fila_Inicio, 2].HorizontalAlignment = HAlign.Center;
+                    celda[Fila_Inicio, 2].Value = oelReporteIVR[i].FechaLlamada;
+                    celda[Fila_Inicio, 3].HorizontalAlignment = HAlign.Center;
+                    celda[Fila_Inicio, 3].Value = oelReporteIVR[i].total;
+                    celda[Fila_Inicio, 4].HorizontalAlignment = HAlign.Center;
+                    celda[Fila_Inicio, 4].Value = oelReporteIVR[i].NPS;
+                }
+                exclName = "Reporte_IVR" + DateTime.Now.ToString("yyyy_MM_ddTHH_mm_ss") + ".xls";
+            }
             Libro.SaveAs(blGeneral.reportesPath + exclName, FileFormat.Excel8);
             result = "/Reportes/" + exclName;
 

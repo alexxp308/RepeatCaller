@@ -2,6 +2,24 @@
 {
     listarCampañas(window.cookie.getCookie()["sedeId"]);
     getMax(getcurrentDate());
+    var formBase = document.getElementById("uploadBase");
+    var formBusqueda = document.getElementById("formBusqueda");
+    formBase.onsubmit = function (e)
+    {
+        e.preventDefault();
+        uploadFile();
+    }
+
+    formBusqueda.onsubmit = function (e)
+    {
+        e.preventDefault();
+        buscarBase();
+    }
+
+    $("#feik").keydown(function (e)
+    {
+        e.preventDefault();
+    });
 });
 
 function getcurrentDate()
@@ -37,7 +55,7 @@ function listarCampañas(sedeId)
             if (response.length > 0)
             {
                 var campanias = response.split("#");
-                var str = "<option value='0'>--SELECCIONAR--</option>";
+                var str = "<option value=''>--SELECCIONAR--</option>";
                 var campania = null;
                 for (var i = 0; i < campanias.length; i++)
                 {
@@ -149,8 +167,8 @@ function uploadFile()
         var tipo = $("#tipo").val();
         var campania = $("#campania").val();
         var fecha = $("#fechaI").val();
-        if (doc != "" && tipo != "0" && fecha != "" && campania != "0")
-        {
+        //if (doc != "" && tipo != "0" && fecha != "" && campania != "0")
+        //{
             file = document.getElementById("myfile").files[0];
             var formData = new FormData();
             formData.append("file", file);
@@ -214,10 +232,10 @@ function uploadFile()
                     }
                 }
             });
-        } else
+        /*} else
         {
             alert("Falta completar campos");
-        }
+        }*/
     }
 }
 
@@ -229,8 +247,8 @@ function abrirModalUpload()
 
 function limpiar()
 {
-    $("#tipo").val("0");
-    $("#campania").val("0");
+    $("#tipo").val("");
+    $("#campania").val("");
     $("#fechaI").val(getcurrentDate());
     $("#feik").val("");
     $("#myfile").val("");
@@ -239,10 +257,10 @@ function limpiar()
 function buscarBase()
 {
     var fecha_buscar = $("#fechaI_buscar").val();
-    if (fecha_buscar != "")
-    {
+    //if (fecha_buscar != "")
+    //{
         var tipo = $("#tipo_buscar").val();
-        var campania = $("#campania_buscar").val();
+        var campania = ($("#campania_buscar").val() == "") ? 0 : $("#campania_buscar").val();
         data = {};
         data.tipo = tipo;
         data.campaniaId = campania*1;
@@ -344,10 +362,10 @@ function buscarBase()
                 }
             }
         });
-    } else
+    /*} else
     {
         alert("Debes seleccionar al menos la fecha");
-    }
+    }*/
 }
 
 function crearPanels(campanias,tipo)
@@ -438,6 +456,8 @@ function verStatus()
             success: function (response)
             {
                 $(".loader").toggle(false);
+                $("#listBases").html("");
+                $("#nameCampFecha").html($("#campania_buscar option:selected").text() + "-" + fecha_buscar);
                 if (response.length > 0)
                 {
                     var datos = response.split("£");
@@ -454,8 +474,6 @@ function verStatus()
                         str += "</tr>";
                         busc += campos[2] + ";";
                     }
-                    //mostrarFaltantes(busc.substr(-1));
-                    $("#nameCampFecha").html($("#campania_buscar option:selected").text() + "-" + fecha_buscar);
                     $("#listBases").html(str);
                 }
                 $("#dvStatus").modal("show");

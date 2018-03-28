@@ -236,7 +236,7 @@ begin
 	select fhCreacion,nombreArchivo,tipo from BASE where campaniaId=@campaniaId and fechaBase = @fechaBase and isActive=1
 end
 
-exec USP_OBTENER_STATUS 1,'2018-03-23'
+exec USP_OBTENER_STATUS 2,'2018-03-28'
 
 CREATE TYPE CDRType AS TABLE 
 (
@@ -550,41 +550,67 @@ BEGIN
 	AND FECHA_CREACION IS NOT NULL and TITULO_INTERACCION IS NOT NULL and TELEFONO IS NOT NULL
 	group by t.FECHA_DE_CREACION,t.LOGIN_AGENTE,t.TELEFONO
 END
-select * from Reporte_TIPI
 
 EXEC USP_REPORTE_SIN_CRUCE_DATOS 1,'2018-03-28'
 
-select camp1,cam2 from t1 
-where not (camp1 in (select camp3 from t2)) and (cam2 in (select cam4 from t2))
-or (camp1 in (select camp3 from t2)) and not (cam2 in (select cam4 from t2))
 
-select * from t1
-select * from t2
+create procedure USP_REPORTE_IVR(
+	@campaniaId int,
+	@fechaInicial varchar(10),
+	@fechaFinal varchar(10)
+)AS
+BEGIN
+	select t.TITULO_INTERACCION,t.FECHA_DE_CREACION,COUNT(*) TOTAL,
+	AVG(CASE WHEN convert(int,[RESPUESTA PREGUNTA 1]) IN(9,8) then 100 
+	when convert(int,[RESPUESTA PREGUNTA 1])=7 then 0 else -100 end) NPS from 
+	Reporte_TIPI t,Reporte_IVR i
+	where i.[Time Segment] = t.FECHA_DE_CREACION and i.[USER] = t.LOGIN_AGENTE and ('51'+i.[ANY]) = t.TELEFONO
+	and t.campaniaId=@campaniaId and i.campaniaId = t.campaniaId and t.fechaBase = i.fechaBase and 
+	i.fechaBase between @fechaInicial and @fechaFinal
+	GROUP BY t.TITULO_INTERACCION,t.FECHA_DE_CREACION
+END
 
-select camp1,cam2 from t1 
-where (camp1 not in (select camp3 from t2)) or (cam2 not in (select cam4 from t2))
+exec USP_REPORTE_IVR 1,'2018-03-25','2018-03-28'
 
-select
-	ta.id1 into #tb
-from t1 ta inner join t2 tb
-	on ta.camp1 = tb.camp3 and ta.cam2 = tb.cam4
-	
-select * from t1 where id1 not in (select ta.id1 from t1 ta inner join t2 tb on ta.camp1 = tb.camp3 
-and ta.cam2 = tb.cam4)
+select * from base
 
+alter procedure BASES_FALTANTES
+(
+	@Campania int,
+	@TIPO int,
+	@fechaInicial varchar(10),
+	@fechaFinal varchar(10)
+)AS
+BEGIN
+	if(@TIPO=1 OR @TIPO=2)
+	begin
+		declare @ff varchar(10) = convert(varchar(10),dateadd(DAY,-1,convert(date,@fechaInicial)),120)
+		declare @fi varchar(10) = convert(varchar(10),dateadd(DAY,-15,convert(date,@ff)),120)
+		/*declare @cont int= 0;
+		declare @table table (fechaBase varchar(10),tipo varchar(4));
+		while(@cont<15)
+		begin
+			insert into @table select convert(varchar(10),dateadd(day,@cont+1,@fi),120),'CDR'
+			insert into @table select convert(varchar(10),dateadd(day,@cont+1,@fi),120),'TIPI'
+			set @cont = @cont+1;
+		end*/
+		select * from BASE WHERE isActive=1 and campaniaId=@Campania and fechaBase between @fi and @ff
+		and (tipo='CDR' or tipo='TIPI')
+		--SELECT * FROM @table
+	end
+	else if(@tipo=2)
+	begin
+		select * from BASE WHERE isActive=1 and campaniaId=@Campania and fechaBase between @fechaInicial and @fechaFinal
+		and tipo='CDR' or tipo='IVR';
+	end
+END
 
+exec BASES_FALTANTES 1,1,'2018-03-29',''
 
-select t.TITULO_INTERACCION,t.FECHA_DE_CREACION,COUNT(*) TOTAL,AVG(CASE WHEN convert(int,[RESPUESTA PREGUNTA 1]) IN(9,8) then 100 
-when convert(int,[RESPUESTA PREGUNTA 1])=7 then 0 else -100 end) NPS from 
-Reporte_TIPI t,Reporte_IVR i
-where i.[Time Segment] = t.FECHA_DE_CREACION and i.[USER] = t.LOGIN_AGENTE and ('51'+i.[ANY]) = t.TELEFONO
-GROUP BY t.TITULO_INTERACCION,t.FECHA_DE_CREACION,t.LOGIN_AGENTE
-select * from Reporte_TIPI
+SELECT * FROM Reporte_CDR
+select dateadd(day,1,'2018/03/22 00:00:00') as aa
+select * from BASE
 
+SELECT DATEADD(year, 1, '2014-04-28');
 
-select CASE WHEN [RESPUESTA PREGUNTA 1] IN(9,8) then 100 
-when [RESPUESTA PREGUNTA 1]=7 then 0 else -100 end from Reporte_IVR;
-
-select AVG(CASE WHEN convert(int,[RESPUESTA PREGUNTA 1]) IN(9,8) then 100 
-when [RESPUESTA PREGUNTA 1]=7 then 0 else -100 end) 
-from Reporte_IVR
+select GETDATE();
