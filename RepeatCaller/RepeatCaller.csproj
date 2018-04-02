@@ -197,6 +197,7 @@
     <Content Include="Content\fonts\icon-font.min.css" />
     <Content Include="Content\css\Site.css" />
     <Content Include="Content\img\loading.gif" />
+    <Content Include="Content\img\repeatCaller.jpg" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\app\cookie.js" />
     <Content Include="Scripts\app\web.js" />

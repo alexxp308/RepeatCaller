@@ -128,5 +128,25 @@ namespace RepeatCaller.Librerias.BL
             }
             return result;
         }
+        //basesFaltantes
+        public string basesFaltantes(int campaniaId, int tipo, string fechaBase, string fechaFinal)
+        {
+            string result = "";
+            using (SqlConnection con = new SqlConnection(ConnectionString))
+            {
+                try
+                {
+                    con.Open();
+                    dlBase odlBase = new dlBase();
+                    result = odlBase.basesFaltantes(campaniaId,tipo, fechaBase,fechaFinal, con);
+                }
+                catch (Exception ex)
+                {
+                    string url = HttpContext.Current.Request.UrlReferrer.ToString();
+                    Log.Error(logPath, "blBase_basesFaltantes", url, ex);
+                }
+            }
+            return result;
+        }
     }
 }

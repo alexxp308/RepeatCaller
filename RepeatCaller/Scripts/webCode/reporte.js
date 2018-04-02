@@ -6,7 +6,7 @@
     formulario.onsubmit = function (e)
     {
         e.preventDefault();
-        traerReporte();
+        basesFaltantes();
     }
 });
 
@@ -110,9 +110,125 @@ function traerReporte()
         dataType: "text",
         success: function (response)
         {
-            debugger;
             $(".loader").toggle(false);
             location.href = response;
         }
     });
+}
+
+function sumarDias(fecha, dias)
+{
+    fecha.setDate(fecha.getDate() + dias);
+    return fecha;
+}
+
+function formatDate(date)
+{
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+
+var reportes = [];
+function basesFaltantes()
+{
+    var data = {};
+    data.campaniaId = $("#campania").val() * 1;
+    data.tipo = $("#tipo").val() * 1;
+    data.fechaBase = $("#fecha").val();
+    data.fechaFinal = $("#fechaFinal").val();
+    $(".loader").toggle(true);
+    $.ajax({
+        method: "POST",
+        url: "/Reporte/basesFaltantes",
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        dataType: "text",
+        success: function (response)
+        {
+            $(".loader").toggle(false);
+            if (response.length > 0)
+            {
+                var datos = response.split("#");
+                var dato = null;
+                var d = null;
+                reportes = [];
+                debugger;
+                if (data.tipo == 1 || data.tipo==2)
+                {
+                    d = new Date(data.fechaBase + " 00:00:00");
+                    for (var i = 1; i < 16; i++)
+                    {
+                        reportes.push({ fecha: formatDate(sumarDias(d, -1)), tipo: 'CDR' });
+                        reportes.push({ fecha: formatDate(d), tipo: 'TIPI' });
+                    }
+                } else if (data.tipo==3)
+                {
+                    d = new Date(data.fechaBase + " 00:00:00");
+                    var d1 = new Date(data.fechaFinal + " 00:00:00");
+                    var cantDias = diferenciaDias(d, d1);
+                    for (var i = 0; i <= cantDias; i++)
+                    {
+                        reportes.push({ fecha: formatDate(sumarDias(d1, ((i==0)?0:-1))), tipo: 'CDR' });
+                        reportes.push({ fecha: formatDate(d1), tipo: 'IVR' });
+                    }
+                    console.log(reportes);
+                }
+                for (var j = 0; j < reportes.length; j++)
+                {
+                    for (var z = 0; z < datos.length; z++)
+                    {
+                        dato = datos[z].split("|");
+                        if (dato[0] == reportes[j]["fecha"] && dato[1] == reportes[j]["tipo"])
+                        {
+                            reportes.splice(j, 1);
+                        }
+                    }
+                }
+                if (reportes.length > 0)
+                {
+                    llenarTable(reportes);
+                    $("#nameReporte").html($('#tipo option:selected').text());
+                    $("#dvBasesFaltantes").modal();
+                } else
+                {
+                    traerReporte();
+                }
+            } else
+            {
+                alert("No se ha subido ninguna base");
+            }
+        }
+    });
+}
+
+function llenarTable(reportes)
+{
+    $("#listBasesFaltantes").html("");
+    var str = "";
+    for (var i = 0; i < reportes.length; i++)
+    {
+        str += "<tr>";
+        str += "<td align='center'>" + (i+1) + "</td>";
+        str += "<td align='center'>" + reportes[i]["fecha"] + "</td>";
+        str += "<td align='center'>" + reportes[i]["tipo"] + "</td>";
+        str += "</tr>";
+    }
+    $("#listBasesFaltantes").html(str);
+}
+
+function diferenciaDias(fi,ff)
+{
+    var fechaInicio = new Date(fi).getTime();
+    var fechaFin = new Date(ff).getTime();
+
+    var diff = fechaFin - fechaInicio;
+
+    return diff / (1000 * 60 * 60 * 24);
 }

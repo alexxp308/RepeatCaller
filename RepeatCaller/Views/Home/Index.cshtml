@@ -1,7 +1,50 @@
 ﻿
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Inicio";
 }
 
-<h2>Index</h2>
+<style>
+    #imagenIndex {
+        position: absolute;
+        z-index: 1;
+        width: 70%;
+        height: 60%;
+        left: 15%;
+        top: 22%;
+        border-radius: 10px;
+        box-shadow: 0 0 200px #ddd;
+        background: #fff;
+    }
+
+    body {
+        padding-bottom: 0px;
+        padding-top: 70px;
+        /*background: #DAE1EB;*/
+    }
+
+    #welcome {
+        position: absolute;
+        left: 15%;
+        padding: 20px;
+        background: #73b383;
+        color: #fff;
+        font-size: 20px;
+        font-weight: bold;
+        width: 70%;
+        text-align: center;
+    }
+</style>
+<div>
+    <div id="welcome">
+        Bienvenido a la web Repeat caller
+    </div>
+    <img src="~/Content/img/repeatCaller.jpg" title="reserva de salas" id="imagenIndex" style="display:none;border: 1px solid #c7d4c8;" />
+</div>
+<script>
+    $(document).ready(function ()
+    {
+        document.getElementById("imagenIndex").style.display = "block";
+        document.getElementById("myfooter").style.display = "none";
+    });
+</script>
 

@@ -574,17 +574,17 @@ exec USP_REPORTE_IVR 1,'2018-03-25','2018-03-28'
 
 select * from base
 
-alter procedure BASES_FALTANTES
+alter procedure USP_BASES_FALTANTES
 (
-	@Campania int,
-	@TIPO int,
-	@fechaInicial varchar(10),
+	@campaniaId int,
+	@tipo int,
+	@fechaBase varchar(10),
 	@fechaFinal varchar(10)
 )AS
 BEGIN
-	if(@TIPO=1 OR @TIPO=2)
+	if(@tipo=1 OR @tipo=2)
 	begin
-		declare @ff varchar(10) = convert(varchar(10),dateadd(DAY,-1,convert(date,@fechaInicial)),120)
+		declare @ff varchar(10) = convert(varchar(10),dateadd(DAY,-1,convert(date,@fechaBase)),120)
 		declare @fi varchar(10) = convert(varchar(10),dateadd(DAY,-15,convert(date,@ff)),120)
 		/*declare @cont int= 0;
 		declare @table table (fechaBase varchar(10),tipo varchar(4));
@@ -594,18 +594,18 @@ BEGIN
 			insert into @table select convert(varchar(10),dateadd(day,@cont+1,@fi),120),'TIPI'
 			set @cont = @cont+1;
 		end*/
-		select * from BASE WHERE isActive=1 and campaniaId=@Campania and fechaBase between @fi and @ff
+		select fechaBase,tipo from BASE WHERE isActive=1 and campaniaId=@campaniaId and fechaBase between @fi and @ff
 		and (tipo='CDR' or tipo='TIPI')
 		--SELECT * FROM @table
 	end
-	else if(@tipo=2)
+	else if(@tipo=3)
 	begin
-		select * from BASE WHERE isActive=1 and campaniaId=@Campania and fechaBase between @fechaInicial and @fechaFinal
-		and tipo='CDR' or tipo='IVR';
+		select fechaBase,tipo from BASE WHERE isActive=1 and campaniaId=@campaniaId and fechaBase between @fechaBase and @fechaFinal
+		and (tipo='CDR' or tipo='IVR');
 	end
 END
 
-exec BASES_FALTANTES 1,1,'2018-03-29',''
+exec USP_BASES_FALTANTES 1,3,'2018-03-23','2018-03-27'
 
 SELECT * FROM Reporte_CDR
 select dateadd(day,1,'2018/03/22 00:00:00') as aa

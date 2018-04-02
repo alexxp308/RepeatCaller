@@ -1,0 +1,7 @@
+Nombre:		blBase_basesFaltantes
+URL:		http://localhost:1468/Reporte
+Mensaje:	La longitud no puede ser inferior a cero.
+Nombre del parámetro: length
+Detalle:	en System.String.Substring(Int32 startIndex, Int32 length)
+   en RepeatCaller.Librerias.DL.dlBase.basesFaltantes(Int32 campaniaId, Int32 tipo, String fechaBase, String fechaFinal, SqlConnection cn) en D:\DESARROLLO_ALEXANDER_HUERTA_MENACHO\Reporte_Repeat_Caller\RepeatCaller\RepeatCaller.Librerias.DL\dlBase.cs:línea 129
+   en RepeatCaller.Librerias.BL.blBase.basesFaltantes(Int32 campaniaId, Int32 tipo, String fechaBase, String fechaFinal) en D:\DESARROLLO_ALEXANDER_HUERTA_MENACHO\Reporte_Repeat_Caller\RepeatCaller\RepeatCaller.Librerias.BL\blBase.cs:línea 141

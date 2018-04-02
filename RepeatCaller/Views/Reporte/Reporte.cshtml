@@ -50,4 +50,32 @@
         <!--<button class="btn btn-primary" onclick="traerReporte();"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Descargar</button>-->
     </div>
 </div>
+<div class="modal fade" id="dvBasesFaltantes" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="dvBasesFaltantes" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body" style="padding-bottom:0px;padding-top:10px;">
+                <fieldset class="border:solid 1px;padding:10px;">
+                    <legend class="ng-binding" style="width:auto;border-bottom:0;margin-bottom:10px;font-size:16px;font-style:italic;color:#B7B7B7;">Bases faltantes</legend>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="blue-grey lighten-4">
+                                <tr class="success">
+                                    <th>Nro</th>
+                                    <th>Fecha</th>
+                                    <th>Tipo</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listBasesFaltantes"></tbody>
+                        </table>
+                        <p>Estas son las Bases faltantes. ¿Aun asi desea descargar el <span id="nameReporte"></span> ?</p>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="modal-footer" style="padding-top:5px;padding-bottom:5px;">
+                <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+                <button class="btn btn-success" onclick="traerReporte();" data-dismiss="modal" aria-hidden="true">Descargar</button>
+            </div>
+        </div>
+    </div>
+</div>
 @Scripts.Render("~/scripts/Reporte")

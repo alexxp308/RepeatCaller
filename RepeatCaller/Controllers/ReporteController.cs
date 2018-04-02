@@ -350,5 +350,15 @@ namespace RepeatCaller.Controllers
 
             return result;
         }
+
+        [HttpPost]
+        [Authorize(Roles = "Supervisor,Ejecutivo")]
+        public string basesFaltantes(ReporteDTO reporte)
+        {
+            string result = "";
+            blBase oblBase = new blBase();
+            result = oblBase.basesFaltantes(reporte.campaniaId,reporte.tipo,reporte.fechaBase,((reporte.fechaFinal == null)?"":reporte.fechaFinal));
+            return result;
+        }
     }
 }

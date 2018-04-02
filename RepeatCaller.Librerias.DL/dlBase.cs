@@ -106,5 +106,27 @@ namespace RepeatCaller.Librerias.DL
             }
             return result.Substring(0, result.Length - 1);
         }
+
+        public string basesFaltantes(int campaniaId, int tipo, string fechaBase,string fechaFinal, SqlConnection cn)
+        {
+            string result = "";
+            SqlCommand cmd = new SqlCommand("USP_BASES_FALTANTES", cn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.CommandTimeout = 1800;
+            cmd.Parameters.AddWithValue("@campaniaId", campaniaId);
+            cmd.Parameters.AddWithValue("@tipo", tipo);
+            cmd.Parameters.AddWithValue("@fechaBase", fechaBase);
+            cmd.Parameters.AddWithValue("@fechaFinal", fechaFinal);
+            SqlDataReader drd = cmd.ExecuteReader(CommandBehavior.SingleResult);
+            if (drd != null)
+            {
+                while (drd.Read())
+                {
+                    result += drd.GetString(0) + "|" + drd.GetString(1) + "#";
+                }
+                drd.Close();
+            }
+            return result.Substring(0, result.Length - 1);
+        }
     }
 }

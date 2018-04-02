@@ -58,6 +58,7 @@ namespace RepeatCaller.Controllers
                     }
 
                     cantFilas = oblBase.CargarTabla(dt, laBase.tipo,laBase.campaniaId,laBase.fechaBase,laBase.baseId);
+                    if(cantFilas == 0) result = oblBase.backBaseAnterior(laBase.tipo, laBase.campaniaId, laBase.fechaBase, laBase.baseId);
                 }
                 catch (Exception ex)
                 {
